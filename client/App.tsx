@@ -7,6 +7,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import FieldGuide from "./pages/FieldGuide";
+import BasecampCourses from "./pages/BasecampCourses";
+import FieldNotes from "./pages/FieldNotes";
+import ThePack from "./pages/ThePack";
+import Shop from "./pages/Shop";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,6 +24,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/field-guide" element={<FieldGuide />} />
+          <Route path="/basecamp-courses" element={<BasecampCourses />} />
+          <Route path="/field-notes" element={<FieldNotes />} />
+          <Route path="/the-pack" element={<ThePack />} />
+          <Route path="/shop" element={<Shop />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
