@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -12,7 +12,19 @@ const navLinks = [
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/field-notes?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-th-cream/95 backdrop-blur-md shadow-[0_32px_64px_-15px_rgba(27,52,55,0.06)]">
@@ -49,18 +61,50 @@ export default function Navbar() {
 
         {/* Right: Icons + Mobile Trigger */}
         <div className="flex items-center gap-5">
-          {/* Search */}
-          <button
-            aria-label="Search"
-            className="hidden sm:flex p-2 rounded-lg hover:bg-th-warm transition-colors"
-          >
-            <svg width="22" height="22" viewBox="0 0 23 23" fill="none">
-              <path
-                d="M17.1 9.5C17.1 5.3105 13.6895 1.9 9.50002 1.9C5.31052 1.9 1.90002 5.3105 1.90002 9.5C1.90002 13.6895 5.31052 17.1 9.50002 17.1C11.2575 17.1 12.863 16.5015 14.155 15.4945L19 20.3395L20.3395 19L15.4945 14.155C16.5315 12.8245 17.0963 11.1868 17.1 9.5ZM3.80002 9.5C3.80002 6.3555 6.35552 3.8 9.50002 3.8C12.6445 3.8 15.2 6.3555 15.2 9.5C15.2 12.6445 12.6445 15.2 9.50002 15.2C6.35552 15.2 3.80002 12.6445 3.80002 9.5Z"
-                fill="#1B3437"
+          {/* Search bar expandable container */}
+          {searchOpen ? (
+            <form
+              onSubmit={handleSearchSubmit}
+              className="hidden sm:flex items-center bg-white border border-th-warm-mid rounded-lg px-3 py-1.5 transition-all duration-300"
+            >
+              <input
+                type="text"
+                placeholder="Search Field Notes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="bg-transparent text-sm text-th-dark placeholder-th-teal/50 outline-none w-48 font-body"
               />
-            </svg>
-          </button>
+              <button type="submit" aria-label="Submit search">
+                <svg width="18" height="18" viewBox="0 0 23 23" fill="none">
+                  <path
+                    d="M17.1 9.5C17.1 5.3105 13.6895 1.9 9.50002 1.9C5.31052 1.9 1.90002 5.3105 1.90002 9.5C1.90002 13.6895 5.31052 17.1 9.50002 17.1C11.2575 17.1 12.863 16.5015 14.155 15.4945L19 20.3395L20.3395 19L15.4945 14.155C16.5315 12.8245 17.0963 11.1868 17.1 9.5ZM3.80002 9.5C3.80002 6.3555 6.35552 3.8 9.50002 3.8C12.6445 3.8 15.2 6.3555 15.2 9.5C15.2 12.6445 12.6445 15.2 9.50002 15.2C6.35552 15.2 3.80002 12.6445 3.80002 9.5Z"
+                    fill="#1B3437"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchOpen(false)}
+                className="ml-2 text-th-teal/60 hover:text-th-dark text-xs font-semibold font-body"
+              >
+                Close
+              </button>
+            </form>
+          ) : (
+            <button
+              onClick={() => setSearchOpen(true)}
+              aria-label="Open search bar"
+              className="hidden sm:flex p-2 rounded-lg hover:bg-th-warm transition-colors"
+            >
+              <svg width="22" height="22" viewBox="0 0 23 23" fill="none">
+                <path
+                  d="M17.1 9.5C17.1 5.3105 13.6895 1.9 9.50002 1.9C5.31052 1.9 1.90002 5.3105 1.90002 9.5C1.90002 13.6895 5.31052 17.1 9.50002 17.1C11.2575 17.1 12.863 16.5015 14.155 15.4945L19 20.3395L20.3395 19L15.4945 14.155C16.5315 12.8245 17.0963 11.1868 17.1 9.5ZM3.80002 9.5C3.80002 6.3555 6.35552 3.8 9.50002 3.8C12.6445 3.8 15.2 6.3555 15.2 9.5C15.2 12.6445 12.6445 15.2 9.50002 15.2C6.35552 15.2 3.80002 12.6445 3.80002 9.5Z"
+                  fill="#1B3437"
+                />
+              </svg>
+            </button>
+          )}
 
           {/* Account */}
           <button
