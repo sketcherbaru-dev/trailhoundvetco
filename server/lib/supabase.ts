@@ -1,15 +1,24 @@
 import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || '';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || 'placeholder-service-key';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not set. API routes will not work.');
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  console.warn('⚠️  Supabase environment variables not set. Set SUPABASE_URL and SUPABASE_ANON_KEY in .env to use API routes.');
 }
 
 // Anon client for client-side queries (respects RLS)
-export const supabaseAnonClient = createClient(supabaseUrl, supabaseAnonKey);
+export const supabaseAnonClient = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    transport: ws as any
+  }
+});
 
 // Service role client for admin operations (bypasses RLS)
-export const supabaseServiceClient = createClient(supabaseUrl, supabaseServiceKey);
+export const supabaseServiceClient = createClient(supabaseUrl, supabaseServiceKey, {
+  realtime: {
+    transport: ws as any
+  }
+});
