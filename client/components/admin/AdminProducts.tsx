@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Product } from "@shared/api";
 import { toast } from "sonner";
+import { uploadImage } from "@/lib/imageUpload";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,6 +25,24 @@ const AdminProducts = () => {
     stripe_product_id: "",
     featured: false,
   });
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const url = await uploadImage(file);
+      setFormData({ ...formData, image: url });
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload image");
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();

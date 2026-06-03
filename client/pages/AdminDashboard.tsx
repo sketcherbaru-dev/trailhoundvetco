@@ -40,6 +40,7 @@ const AdminDashboard = () => {
     setIsAuthenticated(false);
     setShowLoginForm(true);
     setPassword("");
+    navigate("/");
   };
 
   if (showLoginForm && !isAuthenticated) {

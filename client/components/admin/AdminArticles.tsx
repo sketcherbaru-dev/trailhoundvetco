@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Article } from "@shared/api";
 import { toast } from "sonner";
+import { uploadImage } from "@/lib/imageUpload";
 
 const AdminArticles = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -25,6 +26,7 @@ const AdminArticles = () => {
     read_time: "5 min read",
     featured: false,
   });
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchArticles();
@@ -101,6 +103,23 @@ const AdminArticles = () => {
     });
     setEditingId(article.id);
     setIsOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'thumbnail' | 'image') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const url = await uploadImage(file);
+      setFormData({ ...formData, [field]: url });
+      toast.success(`${field} uploaded successfully`);
+    } catch (error) {
+      toast.error(`Failed to upload ${field}`);
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const resetForm = () => {
@@ -184,22 +203,38 @@ const AdminArticles = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Thumbnail URL</label>
-                <Input
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  type="url"
+              <div className="space-y-2">
+                <label className="block text-sm font-medium mb-1">Thumbnail</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'thumbnail')}
+                  disabled={uploading}
+                  className="block w-full text-sm border rounded-md p-2"
                 />
+                {formData.thumbnail && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-green-600">✓ Uploaded</p>
+                    <img src={formData.thumbnail} alt="Thumbnail preview" className="w-20 h-20 object-cover rounded" />
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Image URL</label>
-                <Input
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  type="url"
+              <div className="space-y-2">
+                <label className="block text-sm font-medium mb-1">Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'image')}
+                  disabled={uploading}
+                  className="block w-full text-sm border rounded-md p-2"
                 />
+                {formData.image && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-green-600">✓ Uploaded</p>
+                    <img src={formData.image} alt="Image preview" className="w-20 h-20 object-cover rounded" />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
