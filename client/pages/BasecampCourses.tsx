@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import { Course } from "@shared/api";
 
 const filters = [
   { id: "all", label: "All Programs" },
@@ -21,62 +22,42 @@ const levelStyles: Record<LevelKey, string> = {
   Professional: "bg-th-dark text-th-cream",
 };
 
-const courses = [
-  {
-    id: 1,
-    title: "Basecamp: Level 1",
-    description: "First aid for the trail, the road, and everywhere in between.",
-    level: "Beginner" as LevelKey,
-    format: "In-Person",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=400",
-    category: "pet-owner",
-  },
-  {
-    id: 2,
-    title: "Basecamp: Level 2",
-    description: "First aid for the trail, the road, and everywhere in between.",
-    level: "Beginner" as LevelKey,
-    format: "In-Person",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=400",
-    category: "pet-owner",
-  },
-  {
-    id: 3,
-    title: "The Ascent: Working Professionals & Outdoor Enthusiasts",
-    description:
-      "Field-ready veterinary first aid for the environments where your dog works.",
-    level: "Intermediate" as LevelKey,
-    format: "In-Person",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/d77d51663f18e7d00750c7efd4cfbbd05694fa51?width=400",
-    category: "sar",
-  },
-  {
-    id: 4,
-    title: "The Summit: Medical Professionals in the Field",
-    description: "Your medical training, applied to the animals in your care.",
-    level: "Advanced" as LevelKey,
-    format: "In-Person",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=400",
-    category: "first-responders",
-  },
-  {
-    id: 5,
-    title: "The Practice: Veterinary CE",
-    description: "Practical, real-world emergency care beyond the clinic walls.",
-    level: "Professional" as LevelKey,
-    format: "In-Person",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/324577372dab7b1eedb53d86d271a785340f874c?width=400",
-    category: "vet",
-  },
-];
+interface CourseDisplay extends Course {
+  category: string;
+}
 
 export default function BasecampCourses() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [courses, setCourses] = useState<CourseDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch courses from API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("/api/courses");
+        const result = await response.json();
+        if (result.error) {
+          setError(result.error);
+          setCourses([]);
+        } else {
+          const mapped = (result.data || []).map((c: Course): CourseDisplay => ({
+            ...c,
+            category: c.category || "pet-owner",
+          }));
+          setCourses(mapped);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch courses");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const filtered =
     activeFilter === "all"

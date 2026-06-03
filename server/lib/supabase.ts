@@ -1,17 +1,12 @@
-import dotenv from 'dotenv';
-import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 import ws from 'ws';
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-
 const supabaseUrl = process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'placeholder-key';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || 'placeholder-service-key';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || 'placeholder-service-key';
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-  console.warn('⚠️  Supabase environment variables not set. Set SUPABASE_URL and SUPABASE_ANON_KEY in .env to use API routes.');
+  console.warn('⚠️  Supabase environment variables not set. Please configure SUPABASE_URL and SUPABASE_ANON_KEY in your Vercel project settings.');
 }
 
 // Anon client for client-side queries (respects RLS)

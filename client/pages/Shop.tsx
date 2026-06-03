@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import { Product } from "@shared/api";
 
 const categories = [
   { id: "all", label: "All Products" },
@@ -22,11 +23,11 @@ const badgeStyles: Record<BadgeType, string> = {
   "EXTERNAL": "bg-th-mint text-th-dark",
 };
 
-interface Product {
-  id: number;
+interface ProductDisplay {
+  id: string;
   name: string;
   description: string;
-  price: string;
+  price: number | string;
   badge: BadgeType;
   category: string;
   image: string;
@@ -34,111 +35,46 @@ interface Product {
   href: string;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Trailhound Field Guide: First Aid for Pets",
-    description:
-      "The definitive wilderness first aid manual for adventurous pet owners. Written by Dr. Moe Baum, DVM.",
-    price: "$34.99",
-    badge: "PRE-ORDER",
-    category: "books",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=600",
-    href: "/field-guide",
-  },
-  {
-    id: 2,
-    name: "The Winter Expedition Manual",
-    description:
-      "Cold-weather survival and first aid for dogs and cats in sub-zero environments.",
-    price: "$24.99",
-    badge: "BEST SELLER",
-    category: "books",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/e8c4f1d9ecb8b25906a4b4cffceef6f307c475a9?width=600",
-    href: "/field-notes",
-  },
-  {
-    id: 3,
-    name: "K9 Trail First Aid Kit",
-    description:
-      "Compact, trail-ready first aid kit curated for outdoor dogs. Fits any pack.",
-    price: "$59.99",
-    badge: "BEST SELLER",
-    category: "kits",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 4,
-    name: "Feline Adventure First Aid Pouch",
-    description:
-      "Lightweight and purpose-built for cats on the move. Includes cat-specific wound care.",
-    price: "$44.99",
-    badge: "NEW",
-    category: "kits",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 5,
-    name: "Basecamp: Level 1 Course",
-    description:
-      "In-person veterinary first aid training for the trail, the road, and everywhere in between.",
-    price: "$149.00",
-    badge: "COMING SOON",
-    category: "courses",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/d77d51663f18e7d00750c7efd4cfbbd05694fa51?width=600",
-    href: "/basecamp-courses",
-  },
-  {
-    id: 6,
-    name: "Emergency Signal & Whistle Kit",
-    description:
-      "High-visibility gear for search and rescue. For you and your trail companion.",
-    price: "$28.99",
-    badge: "EXTERNAL",
-    category: "gear",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/38398c6854188508193d665e6b1695a39ac29f21?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 7,
-    name: "Trailhound Paw Care Bundle",
-    description:
-      "Wax, booties, and blister care — everything you need to protect paws from scree, ice, and heat.",
-    price: "$39.99",
-    badge: "NEW",
-    category: "gear",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/324577372dab7b1eedb53d86d271a785340f874c?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 8,
-    name: "The Ascent: Working Dog Course",
-    description:
-      "Field-ready veterinary first aid for working dog handlers and SAR teams.",
-    price: "$199.00",
-    badge: "COMING SOON",
-    category: "courses",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=600",
-    href: "/basecamp-courses",
-  },
-];
-
 export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [products, setProducts] = useState<ProductDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const result = await response.json();
+        if (result.error) {
+          setError(result.error);
+          setProducts([]);
+        } else {
+          // Map database products to display format
+          const mapped = (result.data || []).map((p: Product): ProductDisplay => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: `$${p.price}`,
+            badge: (p.badge as BadgeType) || "NEW",
+            category: p.category,
+            image: p.image,
+            external: p.external_link ? true : false,
+            href: p.external_link || "#",
+          }));
+          setProducts(mapped);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch products");
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filtered =
     activeCategory === "all"
