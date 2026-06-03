@@ -1,9 +1,4 @@
-import dotenv from "dotenv";
-import path from "path";
 import express from "express";
-
-dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { getArticles, getArticleById, getFeaturedArticles } from "./routes/articles";
