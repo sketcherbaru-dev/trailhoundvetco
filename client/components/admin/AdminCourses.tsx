@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Course } from "@shared/api";
 import { toast } from "sonner";
+import { uploadImage } from "@/lib/imageUpload";
 
 const AdminCourses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -24,6 +25,24 @@ const AdminCourses = () => {
     stripe_product_id: "",
     featured: false,
   });
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const url = await uploadImage(file);
+      setFormData({ ...formData, thumbnail: url });
+      toast.success("Thumbnail uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload thumbnail");
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -175,13 +194,21 @@ const AdminCourses = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Thumbnail URL</label>
-                <Input
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  type="url"
+              <div className="space-y-2">
+                <label className="block text-sm font-medium mb-1">Course Thumbnail</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="block w-full text-sm border rounded-md p-2"
                 />
+                {formData.thumbnail && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-green-600">✓ Uploaded</p>
+                    <img src={formData.thumbnail} alt="Thumbnail preview" className="w-20 h-20 object-cover rounded" />
+                  </div>
+                )}
               </div>
 
               <div>

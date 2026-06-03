@@ -193,13 +193,23 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Image URL</label>
-                <Input
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  type="url"
-                />
+              <div className="space-y-2">
+                <label className="block text-sm font-medium mb-1">Product Image</label>
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="block flex-1 text-sm border rounded-md p-2"
+                  />
+                </div>
+                {formData.image && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-green-600">✓ Uploaded</p>
+                    <img src={formData.image} alt="Product preview" className="w-20 h-20 object-cover rounded" />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
