@@ -1,0 +1,302 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Course } from "@shared/api";
+import { toast } from "sonner";
+
+const AdminCourses = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    level: "Beginner",
+    format: "In-Person",
+    thumbnail: "",
+    category: "pet-owner",
+    curriculum: "",
+    stripe_product_id: "",
+    featured: false,
+  });
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/courses");
+      const data = await response.json();
+      setCourses(data.data || []);
+    } catch (error) {
+      toast.error("Failed to load courses");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const url = editingId ? `/api/admin/courses/${editingId}` : "/api/admin/courses";
+      const method = editingId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to save course");
+
+      await fetchCourses();
+      resetForm();
+      setIsOpen(false);
+      toast.success(editingId ? "Course updated" : "Course created");
+    } catch (error) {
+      toast.error("Failed to save course");
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/courses/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete");
+
+      await fetchCourses();
+      toast.success("Course deleted");
+    } catch (error) {
+      toast.error("Failed to delete course");
+    }
+  };
+
+  const handleEdit = (course: Course) => {
+    setFormData({
+      title: course.title,
+      description: course.description,
+      level: course.level,
+      format: course.format,
+      thumbnail: course.thumbnail,
+      category: course.category,
+      curriculum: course.curriculum || "",
+      stripe_product_id: course.stripe_product_id || "",
+      featured: course.featured,
+    });
+    setEditingId(course.id);
+    setIsOpen(true);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      level: "Beginner",
+      format: "In-Person",
+      thumbnail: "",
+      category: "pet-owner",
+      curriculum: "",
+      stripe_product_id: "",
+      featured: false,
+    });
+    setEditingId(null);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Manage Courses</h2>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => resetForm()}>+ New Course</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingId ? "Edit Course" : "Create New Course"}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Course Title</label>
+                <Input
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={4}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Level</label>
+                  <select
+                    value={formData.level}
+                    onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md"
+                  >
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option>Advanced</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Format</label>
+                  <select
+                    value={formData.format}
+                    onChange={(e) => setFormData({ ...formData, format: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md"
+                  >
+                    <option>In-Person</option>
+                    <option>Online</option>
+                    <option>Hybrid</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Thumbnail URL</label>
+                <Input
+                  value={formData.thumbnail}
+                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                  type="url"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="pet-owner">Pet Owner</option>
+                  <option value="working-dog">Working Dog Handlers & SAR</option>
+                  <option value="first-responder">First Responders</option>
+                  <option value="veterinary">Veterinary Professionals</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Curriculum (Optional)</label>
+                <Textarea
+                  value={formData.curriculum}
+                  onChange={(e) => setFormData({ ...formData, curriculum: e.target.value })}
+                  rows={3}
+                  placeholder="List course topics..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Stripe Product ID (Optional)</label>
+                <Input
+                  value={formData.stripe_product_id}
+                  onChange={(e) => setFormData({ ...formData, stripe_product_id: e.target.value })}
+                  placeholder="prod_..."
+                />
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="mr-2"
+                />
+                <label htmlFor="featured" className="text-sm font-medium">
+                  Featured Course
+                </label>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button type="submit" className="flex-1">
+                  {editingId ? "Update" : "Create"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">Loading...</div>
+      ) : (
+        <div className="bg-white rounded-lg border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Course Title</TableHead>
+                <TableHead>Level</TableHead>
+                <TableHead>Format</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Featured</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {courses.map((course) => (
+                <TableRow key={course.id}>
+                  <TableCell className="font-medium">{course.title}</TableCell>
+                  <TableCell>{course.level}</TableCell>
+                  <TableCell>{course.format}</TableCell>
+                  <TableCell>{course.category}</TableCell>
+                  <TableCell>{course.featured ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(course)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDelete(course.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminCourses;
