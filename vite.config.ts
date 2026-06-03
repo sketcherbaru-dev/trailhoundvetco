@@ -8,12 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: [
-      "localhost",
-      "127.0.0.1",
-      "*.vercel.run",
-      "sb-reua62w9fbj3.vercel.run",
-    ],
+    allowedHosts: "all",
     fs: {
       allow: ["./client", "./shared", "index.html"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
