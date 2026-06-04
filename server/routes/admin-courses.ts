@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { supabaseServiceClient } from '../lib/supabase';
+import { supabaseAnonClient } from '../lib/supabase';
 
 export const createCourse: RequestHandler = async (req, res) => {
   try {
     const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('courses')
       .insert([{
         title,
@@ -37,7 +37,7 @@ export const updateCourse: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('courses')
       .update({
         title,
@@ -49,6 +49,7 @@ export const updateCourse: RequestHandler = async (req, res) => {
         curriculum,
         stripe_product_id,
         featured,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -69,7 +70,7 @@ export const deleteCourse: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { error } = await supabaseServiceClient
+    const { error } = await supabaseAnonClient
       .from('courses')
       .delete()
       .eq('id', id);

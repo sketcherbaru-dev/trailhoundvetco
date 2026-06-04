@@ -1,47 +1,24 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
-const articles = [
-  {
-    id: 1,
-    category: "PHYSIOLOGY",
-    title: "Hard-Packed vs. Loose Scree: A Paw Study",
-    excerpt:
-      "New research on how different mountain terrains impact joint wear in high-activity breeds.",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=192",
-    href: "/field-notes",
-  },
-  {
-    id: 2,
-    category: "BEHAVIOR",
-    title: "Recall in High-Prey Environments",
-    excerpt:
-      "Training protocols for maintaining focus when wildlife enters the frame.",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=192",
-    href: "/field-notes",
-  },
-];
-
-const courses = [
-  {
-    id: 1,
-    badge: "COMING SOON",
-    title: "Basecamp: Level 1 and Level 2",
-    description: "First aid for the trail, the road, and everywhere in between.",
-  },
-  {
-    id: 2,
-    badge: "COMING SOON",
-    title: "The Ascent — For Working Professionals & Outdoor Enthusiasts",
-    description:
-      "Field-ready veterinary first aid for the environments where your dog works.",
-  },
-];
+import { Article, Course } from "@shared/api";
 
 export default function Index() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  useEffect(() => {
+    fetch("/api/articles/featured")
+      .then((r) => r.json())
+      .then((res) => setArticles((res.data || []).slice(0, 2)))
+      .catch(() => {});
+
+    fetch("/api/courses/featured")
+      .then((r) => r.json())
+      .then((res) => setCourses((res.data || []).slice(0, 2)))
+      .catch(() => {});
+  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
@@ -273,7 +250,7 @@ export default function Index() {
                 {articles.map((article) => (
                   <Link
                     key={article.id}
-                    to={article.href}
+                    to="/field-notes"
                     className="flex items-start gap-6 group"
                   >
                     <div className="flex-shrink-0 w-24 h-24 rounded-lg bg-th-warm-dim overflow-hidden">
@@ -313,7 +290,7 @@ export default function Index() {
                   >
                     <div className="inline-flex self-start">
                       <span className="font-body text-xs font-semibold text-th-brown-dark bg-th-light-peach px-2 py-1 rounded-sm">
-                        {course.badge}
+                        {course.level || "COMING SOON"}
                       </span>
                     </div>
                     <h3 className="font-heading text-lg font-bold text-th-dark leading-snug mt-1">

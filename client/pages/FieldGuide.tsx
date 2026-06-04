@@ -1,42 +1,16 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Article } from "@shared/api";
 
-const fieldNoteArticles = [
-  {
-    id: 1,
-    badge: "ESSENTIAL READING",
-    badgeBg: "bg-th-brown",
-    title: "Winter Expedition Manual",
-    description:
-      "Managing cold stress, paw protection strategies, and nutrition for sub-zero performance in feline and canine companions.",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/e8c4f1d9ecb8b25906a4b4cffceef6f307c475a9?width=800",
-    href: "/field-notes",
-  },
-  {
-    id: 2,
-    badge: "BEHAVIOR",
-    badgeBg: "bg-th-teal",
-    title: "High-Prey Behavior",
-    description:
-      "Training methods for maintaining off-leash control in wildlife-dense environments without compromising the animal's natural drive.",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/324577372dab7b1eedb53d86d271a785340f874c?width=800",
-    href: "/field-notes",
-  },
-  {
-    id: 3,
-    badge: "NUTRITION",
-    badgeBg: "bg-th-dark-teal",
-    title: "Nutrition for Performance",
-    description:
-      "Fueling for the 20-mile day. Caloric density, hydration electrolytes, and recovery supplements for high-output breeds.",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=800",
-    href: "/field-notes",
-  },
-];
+const categoryBg: Record<string, string> = {
+  PHYSIOLOGY: "bg-th-brown",
+  BEHAVIOR: "bg-th-teal",
+  NUTRITION: "bg-th-dark-teal",
+  INJURY: "bg-th-orange",
+  TRAINING: "bg-th-dark",
+};
 
 const bookFeatures = [
   "Build for the moments you don't plan for.",
@@ -45,6 +19,15 @@ const bookFeatures = [
 ];
 
 export default function FieldGuide() {
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    fetch("/api/articles")
+      .then((r) => r.json())
+      .then((res) => setArticles((res.data || []).slice(0, 3)))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
@@ -181,10 +164,10 @@ export default function FieldGuide() {
 
           {/* Article Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {fieldNoteArticles.map((article) => (
+            {articles.map((article) => (
               <Link
                 key={article.id}
-                to={article.href}
+                to="/field-notes"
                 className="group flex flex-col rounded-xl overflow-hidden border border-th-warm-mid bg-white hover:shadow-lg transition-shadow duration-300"
               >
                 {/* Card Image */}
@@ -196,9 +179,9 @@ export default function FieldGuide() {
                   />
                   <div className="absolute top-3 left-3">
                     <span
-                      className={`${article.badgeBg} text-th-cream font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm`}
+                      className={`${categoryBg[article.category] || "bg-th-brown"} text-th-cream font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm`}
                     >
-                      {article.badge}
+                      {article.category}
                     </span>
                   </div>
                 </div>
@@ -209,7 +192,7 @@ export default function FieldGuide() {
                     {article.title}
                   </h3>
                   <p className="font-body text-sm text-th-dark/70 leading-relaxed flex-1">
-                    {article.description}
+                    {article.excerpt}
                   </p>
                   <div className="flex items-center gap-1.5 text-th-orange font-body text-sm font-bold mt-3">
                     Read Field Note

@@ -186,9 +186,10 @@ const AdminProducts = () => {
                     className="w-full px-3 py-2 border rounded-md"
                   >
                     <option>books</option>
+                    <option>kits</option>
                     <option>gear</option>
                     <option>supplies</option>
-                    <option>tools</option>
+                    <option>courses</option>
                   </select>
                 </div>
               </div>
