@@ -73,14 +73,18 @@ const AdminPodcasts = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save podcast");
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.error || "Failed to save podcast");
+      }
 
       await fetchPodcasts();
       resetForm();
       setIsOpen(false);
       toast.success(editingId ? "Podcast updated" : "Podcast created");
     } catch (error) {
-      toast.error("Failed to save podcast");
+      const message = error instanceof Error ? error.message : "Failed to save podcast";
+      toast.error(message);
       console.error(error);
     }
   };

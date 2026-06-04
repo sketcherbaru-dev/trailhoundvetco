@@ -1,24 +1,15 @@
 import { RequestHandler } from 'express';
 import { supabaseServiceClient } from '../lib/supabase';
+import { ArticleSchema } from '@shared/schemas';
+import { ZodError } from 'zod';
 
 export const createArticle: RequestHandler = async (req, res) => {
   try {
-    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
+    const validated = ArticleSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('articles')
-      .insert([{
-        title,
-        excerpt,
-        content,
-        category,
-        author,
-        thumbnail,
-        image,
-        date,
-        read_time,
-        featured,
-      }])
+      .insert([validated])
       .select()
       .single();
 
@@ -29,6 +20,10 @@ export const createArticle: RequestHandler = async (req, res) => {
 
     res.status(201).json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create article' });
   }
 };
@@ -36,22 +31,11 @@ export const createArticle: RequestHandler = async (req, res) => {
 export const updateArticle: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
+    const validated = ArticleSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('articles')
-      .update({
-        title,
-        excerpt,
-        content,
-        category,
-        author,
-        thumbnail,
-        image,
-        date,
-        read_time,
-        featured,
-      })
+      .update(validated)
       .eq('id', id)
       .select()
       .single();
@@ -63,6 +47,10 @@ export const updateArticle: RequestHandler = async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update article' });
   }
 };

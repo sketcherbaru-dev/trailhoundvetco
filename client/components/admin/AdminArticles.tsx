@@ -48,7 +48,7 @@ const AdminArticles = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const url = editingId ? `/api/admin/articles/${editingId}` : "/api/admin/articles";
       const method = editingId ? "PUT" : "POST";
@@ -59,14 +59,18 @@ const AdminArticles = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save article");
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.error || "Failed to save article");
+      }
 
       await fetchArticles();
       resetForm();
       setIsOpen(false);
       toast.success(editingId ? "Article updated" : "Article created");
     } catch (error) {
-      toast.error("Failed to save article");
+      const message = error instanceof Error ? error.message : "Failed to save article";
+      toast.error(message);
       console.error(error);
     }
   };
@@ -98,7 +102,7 @@ const AdminArticles = () => {
       thumbnail: article.thumbnail,
       image: article.image,
       date: article.date,
-      read_time: article.readTime,
+      read_time: article.read_time,
       featured: article.featured,
     });
     setEditingId(article.id);

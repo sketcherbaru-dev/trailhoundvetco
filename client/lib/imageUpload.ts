@@ -5,13 +5,30 @@ export async function uploadImage(file: File): Promise<string> {
 
       const reader = new FileReader();
 
-      reader.onload = (event) => {
-        const result = event.target?.result;
-        if (typeof result === 'string') {
-          // Return base64 data URL
-          resolve(result);
-        } else {
-          reject(new Error('Failed to read file'));
+      reader.onload = async (event) => {
+        try {
+          const result = event.target?.result;
+          if (typeof result !== 'string') {
+            reject(new Error('Failed to read file'));
+            return;
+          }
+
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: result }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            reject(new Error(error.error || 'Upload failed'));
+            return;
+          }
+
+          const data = await response.json();
+          resolve(data.url);
+        } catch (error) {
+          reject(error);
         }
       };
 

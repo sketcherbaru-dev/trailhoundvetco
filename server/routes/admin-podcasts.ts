@@ -1,21 +1,15 @@
 import { RequestHandler } from 'express';
 import { supabaseServiceClient } from '../lib/supabase';
+import { PodcastSchema } from '@shared/schemas';
+import { ZodError } from 'zod';
 
 export const createPodcast: RequestHandler = async (req, res) => {
   try {
-    const { title, description, audio_url, episode_number, published_date, transcript, image } = req.body;
+    const validated = PodcastSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('podcasts')
-      .insert([{
-        title,
-        description,
-        audio_url,
-        episode_number,
-        published_date,
-        transcript,
-        image,
-      }])
+      .insert([validated])
       .select()
       .single();
 
@@ -26,6 +20,10 @@ export const createPodcast: RequestHandler = async (req, res) => {
 
     res.status(201).json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create podcast' });
   }
 };
@@ -33,19 +31,11 @@ export const createPodcast: RequestHandler = async (req, res) => {
 export const updatePodcast: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, audio_url, episode_number, published_date, transcript, image } = req.body;
+    const validated = PodcastSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('podcasts')
-      .update({
-        title,
-        description,
-        audio_url,
-        episode_number,
-        published_date,
-        transcript,
-        image,
-      })
+      .update(validated)
       .eq('id', id)
       .select()
       .single();
@@ -57,6 +47,10 @@ export const updatePodcast: RequestHandler = async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update podcast' });
   }
 };

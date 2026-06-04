@@ -9,6 +9,9 @@ import { createArticle, updateArticle, deleteArticle } from "./routes/admin-arti
 import { createProduct, updateProduct, deleteProduct } from "./routes/admin-products";
 import { createCourse, updateCourse, deleteCourse } from "./routes/admin-courses";
 import { createPodcast, updatePodcast, deletePodcast } from "./routes/admin-podcasts";
+import { uploadImage } from "./routes/upload";
+import { signup, login, logout, verifyToken } from "./routes/auth";
+import { authMiddleware } from "./middleware/auth";
 
 export function createServer() {
   const app = express();
@@ -45,22 +48,31 @@ export function createServer() {
   app.get("/api/podcasts", getPodcasts);
   app.get("/api/podcasts/:id", getPodcastById);
 
-  // Admin routes
-  app.post("/api/admin/articles", createArticle);
-  app.put("/api/admin/articles/:id", updateArticle);
-  app.delete("/api/admin/articles/:id", deleteArticle);
+  // Auth routes
+  app.post("/api/auth/signup", signup);
+  app.post("/api/auth/login", login);
+  app.post("/api/auth/logout", authMiddleware, logout);
+  app.post("/api/auth/verify", verifyToken);
 
-  app.post("/api/admin/products", createProduct);
-  app.put("/api/admin/products/:id", updateProduct);
-  app.delete("/api/admin/products/:id", deleteProduct);
+  // Upload routes
+  app.post("/api/upload", uploadImage);
 
-  app.post("/api/admin/courses", createCourse);
-  app.put("/api/admin/courses/:id", updateCourse);
-  app.delete("/api/admin/courses/:id", deleteCourse);
+  // Admin routes (protected by auth middleware)
+  app.post("/api/admin/articles", authMiddleware, createArticle);
+  app.put("/api/admin/articles/:id", authMiddleware, updateArticle);
+  app.delete("/api/admin/articles/:id", authMiddleware, deleteArticle);
 
-  app.post("/api/admin/podcasts", createPodcast);
-  app.put("/api/admin/podcasts/:id", updatePodcast);
-  app.delete("/api/admin/podcasts/:id", deletePodcast);
+  app.post("/api/admin/products", authMiddleware, createProduct);
+  app.put("/api/admin/products/:id", authMiddleware, updateProduct);
+  app.delete("/api/admin/products/:id", authMiddleware, deleteProduct);
+
+  app.post("/api/admin/courses", authMiddleware, createCourse);
+  app.put("/api/admin/courses/:id", authMiddleware, updateCourse);
+  app.delete("/api/admin/courses/:id", authMiddleware, deleteCourse);
+
+  app.post("/api/admin/podcasts", authMiddleware, createPodcast);
+  app.put("/api/admin/podcasts/:id", authMiddleware, updatePodcast);
+  app.delete("/api/admin/podcasts/:id", authMiddleware, deletePodcast);
 
   return app;
 }
