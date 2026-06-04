@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Product, ProductsResponse } from "@shared/api";
+import { Product } from "@shared/api";
 
 const categories = [
   { id: "all", label: "All Products" },
@@ -125,12 +126,61 @@ const defaultProducts: Product[] = [
     href: "/basecamp-courses",
   },
 ];
+interface ProductDisplay {
+  id: string;
+  name: string;
+  description: string;
+  price: number | string;
+  badge: BadgeType;
+  category: string;
+  image: string;
+  external?: boolean;
+  href: string;
+}
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>(defaultProducts);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [products, setProducts] = useState<ProductDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const result = await response.json();
+        if (result.error) {
+          setError(result.error);
+          setProducts([]);
+        } else {
+          // Map database products to display format
+          const mapped = (result.data || []).map((p: Product): ProductDisplay => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: `$${p.price}`,
+            badge: (p.badge as BadgeType) || "NEW",
+            category: p.category,
+            image: p.image,
+            external: p.external_link ? true : false,
+            href: p.external_link || "#",
+          }));
+          setProducts(mapped);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch products");
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {

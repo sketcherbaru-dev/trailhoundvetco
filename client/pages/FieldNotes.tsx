@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Article, ArticlesResponse } from "@shared/api";
+import { Article } from "@shared/api";
 
 const categories = [
   { id: "all", label: "All Notes" },
@@ -11,6 +12,10 @@ const categories = [
   { id: "BEHAVIOR", label: "Behavior" },
   { id: "NUTRITION", label: "Nutrition" },
 ];
+
+interface ArticleDisplay extends Article {
+  readTime: string;
+}
 
 export default function FieldNotes() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +25,37 @@ export default function FieldNotes() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState(searchParamQuery);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<ArticleDisplay | null>(null);
+  const [articles, setArticles] = useState<ArticleDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch articles from API
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch("/api/articles");
+        const result = await response.json();
+        if (result.error) {
+          setError(result.error);
+          setArticles([]);
+        } else {
+          const mapped = (result.data || []).map((a: Article): ArticleDisplay => ({
+            ...a,
+            readTime: a.readTime || "5 min read",
+          }));
+          setArticles(mapped);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch articles");
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   useEffect(() => {
     const fetchArticles = async () => {

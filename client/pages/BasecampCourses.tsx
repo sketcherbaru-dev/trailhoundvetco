@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Course, CoursesResponse } from "@shared/api";
+import { Course } from "@shared/api";
 
 const filters = [
   { id: "all", label: "All Programs" },
@@ -22,11 +23,45 @@ const levelStyles: Record<LevelKey, string> = {
   Professional: "bg-th-dark text-th-cream",
 };
 
+interface CourseDisplay extends Course {
+  category: string;
+}
+
 export default function BasecampCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState("all");
+  const [courses, setCourses] = useState<CourseDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch courses from API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("/api/courses");
+        const result = await response.json();
+        if (result.error) {
+          setError(result.error);
+          setCourses([]);
+        } else {
+          const mapped = (result.data || []).map((c: Course): CourseDisplay => ({
+            ...c,
+            category: c.category || "pet-owner",
+          }));
+          setCourses(mapped);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch courses");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
