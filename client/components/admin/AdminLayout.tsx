@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
+  { path: "/admin/hero", label: "Hero Images", icon: "🖼️" },
   { path: "/admin/articles", label: "Articles", icon: "📝" },
   { path: "/admin/products", label: "Products", icon: "🛍️" },
   { path: "/admin/courses", label: "Courses", icon: "🎓" },

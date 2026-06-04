@@ -24,6 +24,8 @@ const AdminCourses = () => {
     curriculum: "",
     stripe_product_id: "",
     featured: false,
+    start_date: "",
+    end_date: "",
   });
   const [uploading, setUploading] = useState(false);
 
@@ -121,6 +123,8 @@ const AdminCourses = () => {
       curriculum: course.curriculum || "",
       stripe_product_id: course.stripe_product_id || "",
       featured: course.featured,
+      start_date: course.start_date || "",
+      end_date: course.end_date || "",
     });
     setEditingId(course.id);
     setIsOpen(true);
@@ -137,6 +141,8 @@ const AdminCourses = () => {
       curriculum: "",
       stripe_product_id: "",
       featured: false,
+      start_date: "",
+      end_date: "",
     });
     setEditingId(null);
   };
@@ -239,6 +245,25 @@ const AdminCourses = () => {
                   rows={3}
                   placeholder="List course topics..."
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Start Date (Optional)</label>
+                  <Input
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">End Date (Optional)</label>
+                  <Input
+                    type="date"
+                    value={formData.end_date}
+                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div>

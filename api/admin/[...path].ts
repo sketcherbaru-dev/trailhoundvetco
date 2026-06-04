@@ -1,12 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { createClient } from "@supabase/supabase-js";
+import { db } from "../_db";
 
-const db = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_ANON_KEY || ""
-);
-
-const ALLOWED_TABLES = ["articles", "products", "courses", "podcasts"];
+const ALLOWED_TABLES = ["articles", "products", "courses", "podcasts", "hero_images", "subscribers"];
 
 const setCors = (res: VercelResponse) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

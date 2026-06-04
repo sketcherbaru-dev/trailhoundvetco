@@ -3,7 +3,7 @@ import { supabaseAnonClient } from '../lib/supabase';
 
 export const createArticle: RequestHandler = async (req, res) => {
   try {
-    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
+    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured, home_featured } = req.body;
 
     const { data, error } = await supabaseAnonClient
       .from('articles')
@@ -18,6 +18,7 @@ export const createArticle: RequestHandler = async (req, res) => {
         date: date || new Date().toISOString(),
         read_time,
         featured: featured || false,
+        home_featured: home_featured || false,
       }])
       .select()
       .single();
@@ -36,7 +37,7 @@ export const createArticle: RequestHandler = async (req, res) => {
 export const updateArticle: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
+    const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured, home_featured } = req.body;
 
     const { data, error } = await supabaseAnonClient
       .from('articles')
@@ -51,6 +52,7 @@ export const updateArticle: RequestHandler = async (req, res) => {
         date: date || new Date().toISOString(),
         read_time,
         featured: featured || false,
+        home_featured: home_featured || false,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

@@ -9,6 +9,8 @@ import { createArticle, updateArticle, deleteArticle } from "./routes/admin-arti
 import { createProduct, updateProduct, deleteProduct } from "./routes/admin-products";
 import { createCourse, updateCourse, deleteCourse } from "./routes/admin-courses";
 import { createPodcast, updatePodcast, deletePodcast } from "./routes/admin-podcasts";
+import { subscribe } from "./routes/subscribe";
+import { getHeroImages } from "./routes/hero-images";
 
 export function createServer() {
   const app = express();
@@ -61,6 +63,12 @@ export function createServer() {
   app.post("/api/admin/podcasts", createPodcast);
   app.put("/api/admin/podcasts/:id", updatePodcast);
   app.delete("/api/admin/podcasts/:id", deletePodcast);
+
+  // Newsletter subscription
+  app.post("/api/subscribe", subscribe);
+
+  // Hero images
+  app.get("/api/hero-images", getHeroImages);
 
   return app;
 }

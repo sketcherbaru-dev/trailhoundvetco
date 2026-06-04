@@ -1,10 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
-
-const supabaseAnonClient = createClient(supabaseUrl, supabaseAnonKey);
+import { db } from "./_db";
 
 export default async function handler(
   req: VercelRequest,
@@ -19,7 +14,7 @@ export default async function handler(
   }
 
   try {
-    const { data, error } = await supabaseAnonClient
+    const { data, error } = await db
       .from("courses")
       .select("*")
       .order("created_at", { ascending: false });

@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { Article, Course } from "@shared/api";
+import { Article, Course, HeroImage } from "@shared/api";
+
+const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/83f81d20f77c0a6af91203230ba0026aa266323d?width=1560";
 
 export default function Index() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [homeArticles, setHomeArticles] = useState<Article[]>([]);
+  const [heroImages, setHeroImages] = useState<HeroImage[]>([]);
+  const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
     fetch("/api/articles/featured")
@@ -25,22 +29,56 @@ export default function Index() {
       .then((r) => r.json())
       .then((res) => setHomeArticles((res.data || []).slice(0, 3)))
       .catch(() => {});
+
+    fetch("/api/hero-images")
+      .then((r) => r.json())
+      .then((res) => setHeroImages(res.data || []))
+      .catch(() => {});
   }, []);
+
+  // Auto-advance hero carousel every 5s
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const t = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 5000);
+    return () => clearInterval(t);
+  }, [heroImages.length]);
+
+  const currentHero = heroImages[heroIndex];
+
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
 
-      {/* Hero Section */}
+      {/* Hero Section — Cinematic Carousel */}
       <section className="relative min-h-[85vh] lg:min-h-screen flex items-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/83f81d20f77c0a6af91203230ba0026aa266323d?width=1560"
-            alt="Adventure dogs in nature"
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 hero-gradient" />
-        </div>
+        {/* Slides */}
+        {heroImages.length > 0 ? (
+          heroImages.map((img, idx) => (
+            <div
+              key={img.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === heroIndex ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={img.image_url}
+                alt={img.title || "Hero"}
+                className="w-full h-full object-cover object-center scale-105 transition-transform duration-[8000ms]"
+                style={{ transform: idx === heroIndex ? "scale(1)" : "scale(1.05)" }}
+              />
+              <div className="absolute inset-0 hero-gradient" />
+            </div>
+          ))
+        ) : (
+          <div className="absolute inset-0">
+            <img
+              src={FALLBACK_HERO}
+              alt="Adventure dogs in nature"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 hero-gradient" />
+          </div>
+        )}
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 py-24">
@@ -53,14 +91,14 @@ export default function Index() {
               </span>
             </div>
 
-            {/* Headline */}
-            <h1 className="font-heading text-5xl sm:text-6xl lg:text-[64px] font-black text-th-cream leading-[1.05] tracking-[0.04em] mb-6">
-              Because their world is bigger than the backyard.
+            {/* Headline — use custom title from active slide if set */}
+            <h1 className="font-heading text-5xl sm:text-6xl lg:text-[64px] font-black text-th-cream leading-[1.05] tracking-[0.04em] mb-6 transition-all duration-700">
+              {currentHero?.title || "Because their world is bigger than the backyard."}
             </h1>
 
             {/* Subtitle */}
-            <p className="font-body text-xl md:text-2xl text-th-cream/90 font-medium leading-relaxed mb-10 max-w-lg">
-              Field-tested first aid for adventurous pets.
+            <p className="font-body text-xl md:text-2xl text-th-cream/90 font-medium leading-relaxed mb-10 max-w-lg transition-all duration-700">
+              {currentHero?.subtitle || "Field-tested first aid for adventurous pets."}
             </p>
 
             {/* CTAs */}
@@ -78,6 +116,24 @@ export default function Index() {
                 Basecamp Courses
               </Link>
             </div>
+
+            {/* Carousel dots */}
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-10">
+                {heroImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setHeroIndex(idx)}
+                    className={`rounded-full transition-all duration-300 ${
+                      idx === heroIndex
+                        ? "w-8 h-2 bg-th-peach"
+                        : "w-2 h-2 bg-th-cream/40 hover:bg-th-cream/70"
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

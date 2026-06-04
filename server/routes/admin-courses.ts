@@ -3,7 +3,7 @@ import { supabaseAnonClient } from '../lib/supabase';
 
 export const createCourse: RequestHandler = async (req, res) => {
   try {
-    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
+    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured, start_date, end_date } = req.body;
 
     const { data, error } = await supabaseAnonClient
       .from('courses')
@@ -17,6 +17,8 @@ export const createCourse: RequestHandler = async (req, res) => {
         curriculum,
         stripe_product_id,
         featured,
+        start_date: start_date || null,
+        end_date: end_date || null,
       }])
       .select()
       .single();
@@ -35,7 +37,7 @@ export const createCourse: RequestHandler = async (req, res) => {
 export const updateCourse: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
+    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured, start_date, end_date } = req.body;
 
     const { data, error } = await supabaseAnonClient
       .from('courses')
@@ -49,6 +51,8 @@ export const updateCourse: RequestHandler = async (req, res) => {
         curriculum,
         stripe_product_id,
         featured,
+        start_date: start_date || null,
+        end_date: end_date || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
