@@ -17,6 +17,10 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminArticlesPage from "./pages/admin/AdminArticlesPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import AdminCoursesPage from "./pages/admin/AdminCoursesPage";
+import AdminPodcastsPage from "./pages/admin/AdminPodcastsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +43,10 @@ const App = () => (
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/articles" element={<AdminArticlesPage />} />
+          <Route path="/admin/products" element={<AdminProductsPage />} />
+          <Route path="/admin/courses" element={<AdminCoursesPage />} />
+          <Route path="/admin/podcasts" element={<AdminPodcastsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

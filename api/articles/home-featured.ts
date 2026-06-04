@@ -1,0 +1,32 @@
+import { VercelRequest, VercelResponse } from "@vercel/node";
+import { createClient } from "@supabase/supabase-js";
+
+const db = createClient(
+  process.env.SUPABASE_URL || "",
+  process.env.SUPABASE_ANON_KEY || ""
+);
+
+const mapArticle = (a: any) => ({
+  ...a,
+  readTime: a.read_time || "5 min read",
+  date: a.date ? new Date(a.date).toISOString().split("T")[0] : "",
+});
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  if (req.method === "OPTIONS") return res.status(200).end();
+
+  try {
+    const { data, error } = await db
+      .from("articles")
+      .select("*")
+      .eq("home_featured", true)
+      .order("date", { ascending: false })
+      .limit(3);
+
+    if (error) return res.status(400).json({ data: [], error: error.message });
+    res.json({ data: (data || []).map(mapArticle) });
+  } catch (error) {
+    res.status(500).json({ data: [], error: "Failed to fetch home featured articles" });
+  }
+}

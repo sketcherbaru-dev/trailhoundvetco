@@ -75,14 +75,17 @@ const AdminProducts = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save product");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save product");
+      }
 
       await fetchProducts();
       resetForm();
       setIsOpen(false);
-      toast.success(editingId ? "Product updated" : "Product created");
+      toast.success(editingId ? "Product updated successfully" : "Product created successfully");
     } catch (error) {
-      toast.error("Failed to save product");
+      toast.error(error instanceof Error ? error.message : "Failed to save product");
       console.error(error);
     }
   };
@@ -95,12 +98,15 @@ const AdminProducts = () => {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to delete product");
+      }
 
       await fetchProducts();
-      toast.success("Product deleted");
+      toast.success("Product deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete product");
+      toast.error(error instanceof Error ? error.message : "Failed to delete product");
     }
   };
 

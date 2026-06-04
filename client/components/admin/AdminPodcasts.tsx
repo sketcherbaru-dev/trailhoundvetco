@@ -73,14 +73,17 @@ const AdminPodcasts = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save podcast");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save podcast");
+      }
 
       await fetchPodcasts();
       resetForm();
       setIsOpen(false);
-      toast.success(editingId ? "Podcast updated" : "Podcast created");
+      toast.success(editingId ? "Podcast updated successfully" : "Podcast created successfully");
     } catch (error) {
-      toast.error("Failed to save podcast");
+      toast.error(error instanceof Error ? error.message : "Failed to save podcast");
       console.error(error);
     }
   };
@@ -93,12 +96,15 @@ const AdminPodcasts = () => {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to delete podcast");
+      }
 
       await fetchPodcasts();
-      toast.success("Podcast deleted");
+      toast.success("Podcast deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete podcast");
+      toast.error(error instanceof Error ? error.message : "Failed to delete podcast");
     }
   };
 

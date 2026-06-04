@@ -25,6 +25,7 @@ export interface Article {
   date: string;
   readTime: string;
   featured: boolean;
+  home_featured: boolean;
   created_at: string;
   updated_at: string;
 }

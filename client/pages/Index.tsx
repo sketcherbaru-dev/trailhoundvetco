@@ -2,21 +2,28 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import NewsletterSection from "@/components/NewsletterSection";
 import { Article, Course } from "@shared/api";
 
 export default function Index() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [homeArticles, setHomeArticles] = useState<Article[]>([]);
 
   useEffect(() => {
     fetch("/api/articles/featured")
       .then((r) => r.json())
-      .then((res) => setArticles((res.data || []).slice(0, 2)))
+      .then((res) => setArticles((res.data || []).slice(0, 3)))
       .catch(() => {});
 
     fetch("/api/courses/featured")
       .then((r) => r.json())
       .then((res) => setCourses((res.data || []).slice(0, 2)))
+      .catch(() => {});
+
+    fetch("/api/articles/home-featured")
+      .then((r) => r.json())
+      .then((res) => setHomeArticles((res.data || []).slice(0, 3)))
       .catch(() => {});
   }, []);
   return (
@@ -122,7 +129,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Field Notes Bento Section */}
+      {/* Field Notes Bento Section — THE COLLECTION (DB-driven) */}
       <section className="py-24 bg-th-dark-teal overflow-hidden">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
           {/* Header */}
@@ -150,81 +157,108 @@ export default function Index() {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Main Featured Article — 8 cols */}
-            <div className="lg:col-span-8 relative rounded-xl overflow-hidden min-h-[400px] lg:h-[700px] group cursor-pointer">
-              <img
-                src="https://api.builder.io/api/v1/image/assets/TEMP/e31a3a82b31fe48292562faebd2a7855b840f1ff?width=1560"
-                alt="Winter Expedition"
-                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-th-dark via-th-dark/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 flex flex-col gap-4">
-                <span className="inline-flex self-start px-4 py-1 bg-th-brown rounded-full font-body text-th-cream text-xs font-bold tracking-[0.1em] uppercase">
-                  ESSENTIAL READING
-                </span>
-                <h3 className="font-heading text-2xl md:text-4xl font-bold text-th-cream leading-tight max-w-xl">
-                  The Winter Expedition Manual
-                </h3>
-                <p className="font-body text-th-cream/80 text-base leading-relaxed max-w-md">
-                  How to protect paws from ice, managing core temperatures, and
-                  identifying early-stage hypothermia.
-                </p>
-              </div>
-            </div>
-
-            {/* Right Column — 4 cols */}
-            <div className="lg:col-span-4 flex flex-col gap-6">
-              {/* First-Aid Kit Audit */}
-              <div className="flex-1 relative rounded-xl overflow-hidden bg-th-mint min-h-[300px] lg:h-auto group cursor-pointer">
-                <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/38398c6854188508193d665e6b1695a39ac29f21?width=756"
-                  alt="Hiking dog"
-                  className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <h3 className="font-heading text-2xl font-bold text-th-dark mb-1">
-                    First-Aid Kit Audit
+          {homeArticles.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Main Featured Article — 8 cols */}
+              <Link to="/field-notes" className="lg:col-span-8 relative rounded-xl overflow-hidden min-h-[400px] lg:h-[700px] group cursor-pointer block">
+                {homeArticles[0]?.thumbnail ? (
+                  <img
+                    src={homeArticles[0].thumbnail}
+                    alt={homeArticles[0].title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-th-teal opacity-60" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-th-dark via-th-dark/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 flex flex-col gap-4">
+                  <span className="inline-flex self-start px-4 py-1 bg-th-brown rounded-full font-body text-th-cream text-xs font-bold tracking-[0.1em] uppercase">
+                    {homeArticles[0]?.category || "ESSENTIAL READING"}
+                  </span>
+                  <h3 className="font-heading text-2xl md:text-4xl font-bold text-th-cream leading-tight max-w-xl">
+                    {homeArticles[0]?.title}
                   </h3>
-                  <p className="font-body text-sm text-th-dark/70 font-medium">
-                    Every ounce matters. What's in yours?
+                  <p className="font-body text-th-cream/80 text-base leading-relaxed max-w-md">
+                    {homeArticles[0]?.excerpt}
                   </p>
                 </div>
-              </div>
+              </Link>
 
-              {/* Wild Hydration Card */}
-              <div className="flex-1 relative rounded-xl bg-th-orange overflow-hidden min-h-[280px] lg:h-auto flex flex-col items-center justify-center p-8 text-center">
-                {/* Subtle bg pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <svg width="338" height="338" viewBox="0 0 338 338" fill="none">
-                    <rect width="338" height="338" fill="black" />
-                  </svg>
-                </div>
-
-                <div className="relative flex flex-col items-center gap-4">
-                  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-                    <path
-                      d="M22.6667 19.8333H11.3333C10.9576 19.8333 10.5973 19.9825 10.3316 20.2482C10.0659 20.5139 9.91667 20.8742 9.91667 21.2499C9.91667 21.6256 10.0659 21.986 10.3316 22.2517C10.5973 22.5173 10.9576 22.6666 11.3333 22.6666H22.6667C23.0424 22.6666 23.4027 22.5173 23.6684 22.2517C23.9341 21.986 24.0833 21.6256 24.0833 21.2499C24.0833 20.8742 23.9341 20.5139 23.6684 20.2482C23.4027 19.9825 23.0424 19.8333 22.6667 19.8333ZM22.6667 14.1666H14.1667C13.7909 14.1666 13.4306 14.3158 13.1649 14.5815C12.8993 14.8472 12.75 15.2075 12.75 15.5833C12.75 15.959 12.8993 16.3193 13.1649 16.585C13.4306 16.8507 13.7909 16.9999 14.1667 16.9999H22.6667C23.0424 16.9999 23.4027 16.8507 23.6684 16.585C23.9341 16.3193 24.0833 15.959 24.0833 15.5833C24.0833 15.2075 23.9341 14.8472 23.6684 14.5815C23.4027 14.3158 23.0424 14.1666 22.6667 14.1666ZM28.3333 5.66659H24.0833V4.24992C24.0833 3.8742 23.9341 3.51386 23.6684 3.24818C23.4027 2.98251 23.0424 2.83325 22.6667 2.83325C22.2909 2.83325 21.9306 2.98251 21.6649 3.24818C21.3993 3.51386 21.25 3.8742 21.25 4.24992V5.66659H18.4167V4.24992C18.4167 3.8742 18.2674 3.51386 18.0017 3.24818C17.7361 2.98251 17.3757 2.83325 17 2.83325C16.6243 2.83325 16.2639 2.98251 15.9983 3.24818C15.7326 3.51386 15.5833 3.8742 15.5833 4.24992V5.66659H12.75V4.24992C12.75 3.8742 12.6007 3.51386 12.3351 3.24818C12.0694 2.98251 11.7091 2.83325 11.3333 2.83325C10.9576 2.83325 10.5973 2.98251 10.3316 3.24818C10.0659 3.51386 9.91667 3.8742 9.91667 4.24992V5.66659H5.66667C5.29094 5.66659 4.93061 5.81584 4.66493 6.08152C4.39926 6.34719 4.25 6.70753 4.25 7.08325V26.9166C4.25 28.0438 4.69777 29.1248 5.4948 29.9218C6.29183 30.7188 7.37283 31.1666 8.5 31.1666H25.5C26.6272 31.1666 27.7082 30.7188 28.5052 29.9218C29.3022 29.1248 29.75 28.0438 29.75 26.9166V7.08325C29.75 6.70753 29.6007 6.34719 29.3351 6.08152C29.0694 5.81584 28.7091 5.66659 28.3333 5.66659ZM26.9167 26.9166C26.9167 27.2923 26.7674 27.6526 26.5017 27.9183C26.2361 28.184 25.8757 28.3333 25.5 28.3333H8.5C8.12428 28.3333 7.76394 28.184 7.49827 27.9183C7.23259 27.6526 7.08333 27.2923 7.08333 26.9166V8.49992H9.91667V9.91659C9.91667 10.2923 10.0659 10.6526 10.3316 10.9183C10.5973 11.184 10.9576 11.3333 11.3333 11.3333C11.7091 11.3333 12.0694 11.184 12.3351 10.9183C12.6007 10.6526 12.75 10.2923 12.75 9.91659V8.49992H15.5833V9.91659C15.5833 10.2923 15.7326 10.6526 15.9983 10.9183C16.2639 11.184 16.6243 11.3333 17 11.3333C17.3757 11.3333 17.7361 11.184 18.0017 10.9183C18.2674 10.6526 18.4167 10.2923 18.4167 9.91659V8.49992H21.25V9.91659C21.25 10.2923 21.3993 10.6526 21.6649 10.9183C21.9306 11.184 22.2909 11.3333 22.6667 11.3333C23.0424 11.3333 23.4027 11.184 23.6684 10.9183C23.9341 10.6526 24.0833 10.2923 24.0833 9.91659V8.49992H26.9167V26.9166Z"
-                      fill="#FF9C6F"
-                    />
-                  </svg>
-
-                  <h3 className="font-heading text-2xl font-bold text-th-peach leading-tight max-w-[220px]">
-                    New Field Notes: Wild Hydration
-                  </h3>
-                  <p className="font-body text-sm text-th-peach/80 max-w-xs">
-                    Preventing water-borne illness in the back country.
-                  </p>
-                  <Link
-                    to="/basecamp-courses"
-                    className="mt-2 px-6 py-2 border border-th-peach/30 text-th-cream font-body font-bold text-sm rounded-lg hover:bg-white/10 transition-colors"
-                  >
-                    Enroll Now
+              {/* Right Column — 4 cols */}
+              <div className="lg:col-span-4 flex flex-col gap-6">
+                {homeArticles[1] && (
+                  <Link to="/field-notes" className="flex-1 relative rounded-xl overflow-hidden bg-th-mint min-h-[300px] lg:h-auto group cursor-pointer block">
+                    {homeArticles[1].thumbnail && (
+                      <img
+                        src={homeArticles[1].thumbnail}
+                        alt={homeArticles[1].title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+                      />
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <span className="inline-block font-body text-xs font-bold tracking-widest uppercase text-th-dark/60 mb-2">
+                        {homeArticles[1].category}
+                      </span>
+                      <h3 className="font-heading text-2xl font-bold text-th-dark mb-1">
+                        {homeArticles[1].title}
+                      </h3>
+                      <p className="font-body text-sm text-th-dark/70 font-medium">
+                        {homeArticles[1].excerpt}
+                      </p>
+                    </div>
                   </Link>
+                )}
+
+                {homeArticles[2] && (
+                  <Link to="/field-notes" className="flex-1 relative rounded-xl bg-th-orange overflow-hidden min-h-[280px] lg:h-auto flex flex-col justify-end p-8 cursor-pointer block">
+                    {homeArticles[2].thumbnail && (
+                      <img
+                        src={homeArticles[2].thumbnail}
+                        alt={homeArticles[2].title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-30"
+                      />
+                    )}
+                    <div className="relative flex flex-col gap-2">
+                      <span className="font-body text-xs font-bold tracking-widest uppercase text-th-peach/80">
+                        {homeArticles[2].category}
+                      </span>
+                      <h3 className="font-heading text-2xl font-bold text-th-peach leading-tight">
+                        {homeArticles[2].title}
+                      </h3>
+                      <p className="font-body text-sm text-th-peach/80">
+                        {homeArticles[2].excerpt}
+                      </p>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Fallback placeholder grid */}
+              <div className="lg:col-span-8 relative rounded-xl overflow-hidden min-h-[400px] lg:h-[700px] bg-th-teal/20 flex items-end p-10">
+                <div className="flex flex-col gap-4">
+                  <span className="inline-flex self-start px-4 py-1 bg-th-brown rounded-full font-body text-th-cream text-xs font-bold tracking-[0.1em] uppercase">
+                    COMING SOON
+                  </span>
+                  <h3 className="font-heading text-2xl md:text-4xl font-bold text-th-cream leading-tight max-w-xl">
+                    Featured Field Notes Coming Soon
+                  </h3>
+                  <p className="font-body text-th-cream/80 text-base leading-relaxed max-w-md">
+                    Mark articles as "Home Featured" in the admin panel to display them here.
+                  </p>
+                </div>
+              </div>
+              <div className="lg:col-span-4 flex flex-col gap-6">
+                <div className="flex-1 rounded-xl bg-th-mint/20 min-h-[300px] flex items-center justify-center">
+                  <p className="text-th-cream/40 text-sm font-body">Article 2</p>
+                </div>
+                <div className="flex-1 rounded-xl bg-th-orange/20 min-h-[280px] flex items-center justify-center">
+                  <p className="text-th-cream/40 text-sm font-body">Article 3</p>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -317,49 +351,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-24 bg-th-dark-teal relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-mint blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-peach blur-3xl" />
-        </div>
-
-        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="max-w-2xl">
-            <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-4">
-              JOIN THE COLLECTIVE
-            </p>
-            <h2 className="font-heading text-4xl md:text-5xl font-extrabold text-th-cream leading-tight mb-4">
-              Trail wisdom, delivered to your inbox.
-            </h2>
-            <p className="font-body text-th-cream/70 text-lg leading-relaxed mb-10">
-              First aid tips, field notes, gear reviews, and exclusive course
-              previews — written for the adventurous pet owner. No spam, only
-              trail-worthy content.
-            </p>
-            <form
-              className="flex flex-col sm:flex-row gap-3"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-lg text-th-cream placeholder-th-cream/40 font-body text-base outline-none focus:border-th-peach focus:ring-1 focus:ring-th-peach transition-colors"
-              />
-              <button
-                type="submit"
-                className="px-8 py-4 bg-th-orange text-white font-body font-semibold text-base rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-lg whitespace-nowrap"
-              >
-                Sign Up Free
-              </button>
-            </form>
-            <p className="font-body text-th-cream/40 text-xs mt-4">
-              Join 2,000+ adventurous pet owners. Unsubscribe anytime.
-            </p>
-          </div>
-        </div>
-      </section>
+      <NewsletterSection />
 
       <Footer />
     </div>
