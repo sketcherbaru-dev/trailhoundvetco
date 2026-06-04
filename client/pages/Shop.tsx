@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { Product, ProductsResponse } from "@shared/api";
 import { Product } from "@shared/api";
 
 const categories = [
@@ -24,108 +23,6 @@ const badgeStyles: Record<BadgeType, string> = {
   "EXTERNAL": "bg-th-mint text-th-dark",
 };
 
-const defaultProducts: Product[] = [
-  {
-    id: 1,
-    name: "Trailhound Field Guide: First Aid for Pets",
-    description:
-      "The definitive wilderness first aid manual for adventurous pet owners. Written by Dr. Moe Baum, DVM.",
-    price: "$34.99",
-    badge: "PRE-ORDER",
-    category: "books",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=600",
-    href: "/field-guide",
-  },
-  {
-    id: 2,
-    name: "The Winter Expedition Manual",
-    description:
-      "Cold-weather survival and first aid for dogs and cats in sub-zero environments.",
-    price: "$24.99",
-    badge: "BEST SELLER",
-    category: "books",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/e8c4f1d9ecb8b25906a4b4cffceef6f307c475a9?width=600",
-    href: "/field-notes",
-  },
-  {
-    id: 3,
-    name: "K9 Trail First Aid Kit",
-    description:
-      "Compact, trail-ready first aid kit curated for outdoor dogs. Fits any pack.",
-    price: "$59.99",
-    badge: "BEST SELLER",
-    category: "kits",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 4,
-    name: "Feline Adventure First Aid Pouch",
-    description:
-      "Lightweight and purpose-built for cats on the move. Includes cat-specific wound care.",
-    price: "$44.99",
-    badge: "NEW",
-    category: "kits",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 5,
-    name: "Basecamp: Level 1 Course",
-    description:
-      "In-person veterinary first aid training for the trail, the road, and everywhere in between.",
-    price: "$149.00",
-    badge: "COMING SOON",
-    category: "courses",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/d77d51663f18e7d00750c7efd4cfbbd05694fa51?width=600",
-    href: "/basecamp-courses",
-  },
-  {
-    id: 6,
-    name: "Emergency Signal & Whistle Kit",
-    description:
-      "High-visibility gear for search and rescue. For you and your trail companion.",
-    price: "$28.99",
-    badge: "EXTERNAL",
-    category: "gear",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/38398c6854188508193d665e6b1695a39ac29f21?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 7,
-    name: "Trailhound Paw Care Bundle",
-    description:
-      "Wax, booties, and blister care — everything you need to protect paws from scree, ice, and heat.",
-    price: "$39.99",
-    badge: "NEW",
-    category: "gear",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/324577372dab7b1eedb53d86d271a785340f874c?width=600",
-    external: true,
-    href: "#",
-  },
-  {
-    id: 8,
-    name: "The Ascent: Working Dog Course",
-    description:
-      "Field-ready veterinary first aid for working dog handlers and SAR teams.",
-    price: "$199.00",
-    badge: "COMING SOON",
-    category: "courses",
-    image:
-      "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=600",
-    href: "/basecamp-courses",
-  },
-];
 interface ProductDisplay {
   id: string;
   name: string;
@@ -139,9 +36,6 @@ interface ProductDisplay {
 }
 
 export default function Shop() {
-  const [products, setProducts] = useState<Product[]>(defaultProducts);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,31 +68,6 @@ export default function Shop() {
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch products");
         setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/products');
-        const data: ProductsResponse = await response.json();
-
-        if (data.error) {
-          setError(data.error);
-          setProducts(defaultProducts);
-        } else {
-          setProducts(data.data || defaultProducts);
-          setError(null);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch products');
-        setProducts(defaultProducts);
       } finally {
         setLoading(false);
       }
@@ -301,17 +170,8 @@ export default function Shop() {
       {/* Product Grid */}
       <section className="py-16 flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-th-teal font-body">Loading products...</p>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-th-teal font-body">No products found in this category.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((product) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filtered.map((product) => (
               <div
                 key={product.id}
                 className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
@@ -385,9 +245,8 @@ export default function Shop() {
                   </div>
                 </div>
               </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </section>
 
