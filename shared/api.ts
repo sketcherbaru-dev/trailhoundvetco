@@ -25,6 +25,7 @@ export interface Article {
   date: string;
   readTime: string;
   featured: boolean;
+  home_featured: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -55,6 +56,19 @@ export interface Course {
   curriculum?: string;
   stripe_product_id?: string;
   featured: boolean;
+  start_date?: string;
+  end_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HeroImage {
+  id: string;
+  image_url: string;
+  title?: string;
+  subtitle?: string;
+  display_order: number;
+  active: boolean;
   created_at: string;
   updated_at: string;
 }

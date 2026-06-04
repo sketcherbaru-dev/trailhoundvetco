@@ -1,4 +1,32 @@
+import { useState } from "react";
+
 export default function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to subscribe");
+      setStatus("success");
+      setMessage(data.message || "Successfully subscribed! Welcome to the pack.");
+      setEmail("");
+    } catch (err) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <section className="py-20 bg-th-dark-teal relative overflow-hidden">
       {/* Subtle texture overlay */}
@@ -30,22 +58,41 @@ export default function NewsletterSection() {
               Basecamp Course offerings delivered to your inbox.
             </p>
 
-            <form
-              className="flex flex-col sm:flex-row gap-3 w-full max-w-lg"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                type="email"
-                placeholder="Your Trail Guide Email..."
-                className="flex-1 px-5 py-3.5 bg-white/10 border border-white/20 rounded-lg text-th-cream placeholder-th-cream/40 font-body text-sm outline-none focus:border-th-peach focus:ring-1 focus:ring-th-peach transition-colors"
-              />
-              <button
-                type="submit"
-                className="px-6 py-3.5 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
+            {status === "success" ? (
+              <div className="w-full max-w-lg px-5 py-4 bg-green-500/20 border border-green-400/30 rounded-lg">
+                <p className="font-body text-green-300 text-sm font-medium">{message}</p>
+              </div>
+            ) : (
+              <form
+                className="flex flex-col sm:flex-row gap-3 w-full max-w-lg"
+                onSubmit={handleSubmit}
               >
-                Sign Up
-              </button>
-            </form>
+                <div className="flex-1 flex flex-col gap-1">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
+                    placeholder="Your Trail Guide Email..."
+                    required
+                    className={`w-full px-5 py-3.5 bg-white/10 border rounded-lg text-th-cream placeholder-th-cream/40 font-body text-sm outline-none focus:ring-1 transition-colors ${
+                      status === "error"
+                        ? "border-red-400 focus:border-red-400 focus:ring-red-400"
+                        : "border-white/20 focus:border-th-peach focus:ring-th-peach"
+                    }`}
+                  />
+                  {status === "error" && (
+                    <p className="text-red-400 text-xs">{message}</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="px-6 py-3.5 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap disabled:opacity-60"
+                >
+                  {status === "loading" ? "Signing up..." : "Sign Up"}
+                </button>
+              </form>
+            )}
 
             <p className="font-body text-th-cream/30 text-xs tracking-widest uppercase">
               No spam. Only the good stuff for the long haul.

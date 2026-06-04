@@ -24,6 +24,8 @@ const AdminCourses = () => {
     curriculum: "",
     stripe_product_id: "",
     featured: false,
+    start_date: "",
+    end_date: "",
   });
   const [uploading, setUploading] = useState(false);
 
@@ -75,14 +77,17 @@ const AdminCourses = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save course");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save course");
+      }
 
       await fetchCourses();
       resetForm();
       setIsOpen(false);
-      toast.success(editingId ? "Course updated" : "Course created");
+      toast.success(editingId ? "Course updated successfully" : "Course created successfully");
     } catch (error) {
-      toast.error("Failed to save course");
+      toast.error(error instanceof Error ? error.message : "Failed to save course");
       console.error(error);
     }
   };
@@ -95,12 +100,15 @@ const AdminCourses = () => {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to delete course");
+      }
 
       await fetchCourses();
-      toast.success("Course deleted");
+      toast.success("Course deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete course");
+      toast.error(error instanceof Error ? error.message : "Failed to delete course");
     }
   };
 
@@ -115,6 +123,8 @@ const AdminCourses = () => {
       curriculum: course.curriculum || "",
       stripe_product_id: course.stripe_product_id || "",
       featured: course.featured,
+      start_date: course.start_date || "",
+      end_date: course.end_date || "",
     });
     setEditingId(course.id);
     setIsOpen(true);
@@ -131,6 +141,8 @@ const AdminCourses = () => {
       curriculum: "",
       stripe_product_id: "",
       featured: false,
+      start_date: "",
+      end_date: "",
     });
     setEditingId(null);
   };
@@ -233,6 +245,25 @@ const AdminCourses = () => {
                   rows={3}
                   placeholder="List course topics..."
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Start Date (Optional)</label>
+                  <Input
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">End Date (Optional)</label>
+                  <Input
+                    type="date"
+                    value={formData.end_date}
+                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div>

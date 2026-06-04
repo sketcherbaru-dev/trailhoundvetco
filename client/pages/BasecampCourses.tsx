@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Course } from "@shared/api";
 
 const filters = [
@@ -31,6 +32,7 @@ export default function BasecampCourses() {
   const [courses, setCourses] = useState<CourseDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseDisplay | null>(null);
 
   // Fetch courses from API
   useEffect(() => {
@@ -203,18 +205,87 @@ export default function BasecampCourses() {
                     </p>
                   </div>
 
-                  <Link
-                    to="#"
+                  <button
+                    onClick={() => setSelectedCourse(course)}
                     className="w-full py-3 bg-th-orange text-white font-body font-bold text-sm rounded-lg text-center hover:bg-orange-600 transition-colors"
                   >
                     Learn More
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Course Detail Modal */}
+      <Dialog open={!!selectedCourse} onOpenChange={(open) => { if (!open) setSelectedCourse(null); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedCourse && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-heading font-bold leading-snug pr-8">
+                  {selectedCourse.title}
+                </DialogTitle>
+              </DialogHeader>
+
+              {selectedCourse.thumbnail && (
+                <div className="rounded-lg overflow-hidden h-52 bg-th-warm-dim -mx-1">
+                  <img src={selectedCourse.thumbnail} alt={selectedCourse.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <span className={`px-3 py-1 rounded font-body text-xs font-semibold ${levelStyles[selectedCourse.level as LevelKey] || "bg-gray-200 text-gray-700"}`}>
+                  {selectedCourse.level}
+                </span>
+                <span className="px-3 py-1 rounded font-body text-xs font-semibold bg-th-warm text-th-dark">
+                  {selectedCourse.format}
+                </span>
+                <span className="px-3 py-1 rounded font-body text-xs font-semibold bg-th-light-teal text-th-dark-teal">
+                  {selectedCourse.category}
+                </span>
+              </div>
+
+              <p className="font-body text-th-dark/80 leading-relaxed">{selectedCourse.description}</p>
+
+              {(selectedCourse.start_date || selectedCourse.end_date) && (
+                <div className="flex flex-wrap gap-6 p-4 bg-th-warm rounded-lg">
+                  {selectedCourse.start_date && (
+                    <div>
+                      <p className="font-body text-xs font-bold uppercase tracking-widest text-th-teal mb-1">Start Date</p>
+                      <p className="font-body font-semibold text-th-dark">
+                        {new Date(selectedCourse.start_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                      </p>
+                    </div>
+                  )}
+                  {selectedCourse.end_date && (
+                    <div>
+                      <p className="font-body text-xs font-bold uppercase tracking-widest text-th-teal mb-1">End Date</p>
+                      <p className="font-body font-semibold text-th-dark">
+                        {new Date(selectedCourse.end_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {selectedCourse.curriculum && (
+                <div>
+                  <p className="font-body text-sm font-bold uppercase tracking-widest text-th-teal mb-2">Curriculum</p>
+                  <p className="font-body text-sm text-th-dark/80 leading-relaxed whitespace-pre-line">{selectedCourse.curriculum}</p>
+                </div>
+              )}
+
+              <div className="pt-2">
+                <p className="font-body text-xs text-gray-400">
+                  Added {new Date(selectedCourse.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                </p>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <NewsletterSection />
       <Footer />
