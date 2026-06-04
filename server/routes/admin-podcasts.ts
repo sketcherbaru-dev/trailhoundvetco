@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { supabaseServiceClient } from '../lib/supabase';
+import { supabaseAnonClient } from '../lib/supabase';
 
 export const createPodcast: RequestHandler = async (req, res) => {
   try {
     const { title, description, audio_url, episode_number, published_date, transcript, image } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('podcasts')
       .insert([{
         title,
@@ -35,7 +35,7 @@ export const updatePodcast: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { title, description, audio_url, episode_number, published_date, transcript, image } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('podcasts')
       .update({
         title,
@@ -65,7 +65,7 @@ export const deletePodcast: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { error } = await supabaseServiceClient
+    const { error } = await supabaseAnonClient
       .from('podcasts')
       .delete()
       .eq('id', id);

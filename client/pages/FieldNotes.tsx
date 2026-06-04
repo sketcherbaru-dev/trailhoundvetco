@@ -10,6 +10,8 @@ const categories = [
   { id: "PHYSIOLOGY", label: "Physiology" },
   { id: "BEHAVIOR", label: "Behavior" },
   { id: "NUTRITION", label: "Nutrition" },
+  { id: "INJURY", label: "Injury" },
+  { id: "TRAINING", label: "Training" },
 ];
 
 interface ArticleDisplay extends Article {
@@ -159,7 +161,16 @@ export default function FieldNotes() {
       {/* Articles Grid */}
       <section className="py-16 flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          {filteredArticles.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="inline-block w-8 h-8 border-4 border-th-orange border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="font-body text-th-teal">Loading articles...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="font-body text-red-500">{error}</p>
+            </div>
+          ) : filteredArticles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredArticles.map((article) => (
                 <div

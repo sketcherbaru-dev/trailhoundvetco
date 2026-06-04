@@ -150,6 +150,16 @@ export default function BasecampCourses() {
       {/* Course List */}
       <section id="courses" className="py-12 bg-th-cream flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="inline-block w-8 h-8 border-4 border-th-orange border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="font-body text-th-teal">Loading courses...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="font-body text-th-teal/60">No courses available yet.</p>
+            </div>
+          ) : null}
           <div className="flex flex-col gap-5">
             {filtered.map((course) => (
               <div

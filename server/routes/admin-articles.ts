@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { supabaseServiceClient } from '../lib/supabase';
+import { supabaseAnonClient } from '../lib/supabase';
 
 export const createArticle: RequestHandler = async (req, res) => {
   try {
     const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('articles')
       .insert([{
         title,
@@ -15,9 +15,9 @@ export const createArticle: RequestHandler = async (req, res) => {
         author,
         thumbnail,
         image,
-        date,
+        date: date || new Date().toISOString(),
         read_time,
-        featured,
+        featured: featured || false,
       }])
       .select()
       .single();
@@ -27,7 +27,7 @@ export const createArticle: RequestHandler = async (req, res) => {
       return;
     }
 
-    res.status(201).json(data);
+    res.status(201).json({ ...data, readTime: data.read_time });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create article' });
   }
@@ -38,7 +38,7 @@ export const updateArticle: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('articles')
       .update({
         title,
@@ -48,9 +48,10 @@ export const updateArticle: RequestHandler = async (req, res) => {
         author,
         thumbnail,
         image,
-        date,
+        date: date || new Date().toISOString(),
         read_time,
-        featured,
+        featured: featured || false,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -61,7 +62,7 @@ export const updateArticle: RequestHandler = async (req, res) => {
       return;
     }
 
-    res.json(data);
+    res.json({ ...data, readTime: data.read_time });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update article' });
   }
@@ -71,7 +72,7 @@ export const deleteArticle: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { error } = await supabaseServiceClient
+    const { error } = await supabaseAnonClient
       .from('articles')
       .delete()
       .eq('id', id);

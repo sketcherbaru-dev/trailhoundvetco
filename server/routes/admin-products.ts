@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { supabaseServiceClient } from '../lib/supabase';
+import { supabaseAnonClient } from '../lib/supabase';
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
     const { name, description, price, image, category, badge, external_link, stripe_product_id, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('products')
       .insert([{
         name,
@@ -37,7 +37,7 @@ export const updateProduct: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, image, category, badge, external_link, stripe_product_id, featured } = req.body;
 
-    const { data, error } = await supabaseServiceClient
+    const { data, error } = await supabaseAnonClient
       .from('products')
       .update({
         name,
@@ -49,6 +49,7 @@ export const updateProduct: RequestHandler = async (req, res) => {
         external_link,
         stripe_product_id,
         featured,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -69,7 +70,7 @@ export const deleteProduct: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { error } = await supabaseServiceClient
+    const { error } = await supabaseAnonClient
       .from('products')
       .delete()
       .eq('id', id);

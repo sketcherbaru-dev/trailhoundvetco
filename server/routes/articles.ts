@@ -2,24 +2,26 @@ import { RequestHandler } from 'express';
 import { supabaseAnonClient } from '../lib/supabase';
 import { ArticlesResponse, ArticleResponse, Article } from '@shared/api';
 
+const mapArticle = (a: any): Article => ({
+  ...a,
+  readTime: a.read_time || '5 min read',
+  date: a.date ? new Date(a.date).toISOString().split('T')[0] : '',
+});
+
 export const getArticles: RequestHandler = async (req, res) => {
   try {
-    console.log('[v0] Fetching articles from Supabase...');
     const { data, error } = await supabaseAnonClient
       .from('articles')
       .select('*')
       .order('date', { ascending: false });
 
     if (error) {
-      console.error('[v0] Supabase error:', error);
-      res.status(400).json({ data: null, error: error.message } as ArticleResponse);
+      res.status(400).json({ data: [], error: error.message } as ArticlesResponse);
       return;
     }
 
-    console.log('[v0] Articles fetched:', data?.length);
-    res.json({ data: data as Article[] } as ArticlesResponse);
+    res.json({ data: (data || []).map(mapArticle) } as ArticlesResponse);
   } catch (error) {
-    console.error('[v0] Error fetching articles:', error);
     res.status(500).json({
       data: [],
       error: error instanceof Error ? error.message : 'Failed to fetch articles',
@@ -42,7 +44,7 @@ export const getArticleById: RequestHandler = async (req, res) => {
       return;
     }
 
-    res.json({ data: data as Article } as ArticleResponse);
+    res.json({ data: mapArticle(data) } as ArticleResponse);
   } catch (error) {
     res.status(500).json({
       data: null,
@@ -61,11 +63,11 @@ export const getFeaturedArticles: RequestHandler = async (req, res) => {
       .limit(5);
 
     if (error) {
-      res.status(400).json({ data: null, error: error.message } as ArticleResponse);
+      res.status(400).json({ data: [], error: error.message } as ArticlesResponse);
       return;
     }
 
-    res.json({ data: data as Article[] } as ArticlesResponse);
+    res.json({ data: (data || []).map(mapArticle) } as ArticlesResponse);
   } catch (error) {
     res.status(500).json({
       data: [],

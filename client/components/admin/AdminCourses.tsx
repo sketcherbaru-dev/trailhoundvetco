@@ -219,9 +219,9 @@ const AdminCourses = () => {
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   <option value="pet-owner">Pet Owner</option>
-                  <option value="working-dog">Working Dog Handlers & SAR</option>
-                  <option value="first-responder">First Responders</option>
-                  <option value="veterinary">Veterinary Professionals</option>
+                  <option value="sar">Working Dog Handlers & SAR</option>
+                  <option value="first-responders">First Responders</option>
+                  <option value="vet">Veterinary Professionals</option>
                 </select>
               </div>
 
