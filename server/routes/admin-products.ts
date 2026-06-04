@@ -1,23 +1,15 @@
 import { RequestHandler } from 'express';
 import { supabaseServiceClient } from '../lib/supabase';
+import { ProductSchema } from '@shared/schemas';
+import { ZodError } from 'zod';
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
-    const { name, description, price, image, category, badge, external_link, stripe_product_id, featured } = req.body;
+    const validated = ProductSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('products')
-      .insert([{
-        name,
-        description,
-        price,
-        image,
-        category,
-        badge,
-        external_link,
-        stripe_product_id,
-        featured,
-      }])
+      .insert([validated])
       .select()
       .single();
 
@@ -28,6 +20,10 @@ export const createProduct: RequestHandler = async (req, res) => {
 
     res.status(201).json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create product' });
   }
 };
@@ -35,21 +31,11 @@ export const createProduct: RequestHandler = async (req, res) => {
 export const updateProduct: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, image, category, badge, external_link, stripe_product_id, featured } = req.body;
+    const validated = ProductSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('products')
-      .update({
-        name,
-        description,
-        price,
-        image,
-        category,
-        badge,
-        external_link,
-        stripe_product_id,
-        featured,
-      })
+      .update(validated)
       .eq('id', id)
       .select()
       .single();
@@ -61,6 +47,10 @@ export const updateProduct: RequestHandler = async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update product' });
   }
 };

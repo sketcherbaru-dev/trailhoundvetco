@@ -12,22 +12,17 @@ const categories = [
   { id: "NUTRITION", label: "Nutrition" },
 ];
 
-interface ArticleDisplay extends Article {
-  readTime: string;
-}
-
 export default function FieldNotes() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParamQuery = searchParams.get("search") || "";
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState(searchParamQuery);
-  const [selectedArticle, setSelectedArticle] = useState<ArticleDisplay | null>(null);
-  const [articles, setArticles] = useState<ArticleDisplay[]>([]);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch articles from API
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -37,11 +32,7 @@ export default function FieldNotes() {
           setError(result.error);
           setArticles([]);
         } else {
-          const mapped = (result.data || []).map((a: Article): ArticleDisplay => ({
-            ...a,
-            readTime: a.readTime || "5 min read",
-          }));
-          setArticles(mapped);
+          setArticles(result.data || []);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch articles");
@@ -186,7 +177,7 @@ export default function FieldNotes() {
                     <div className="flex items-center gap-2 text-xs text-th-teal font-body font-medium">
                       <span>{article.date}</span>
                       <span>•</span>
-                      <span>{article.readTime}</span>
+                      <span>{article.read_time}</span>
                     </div>
 
                     <h2 className="font-heading text-xl font-bold text-th-dark leading-snug group-hover:text-th-orange transition-colors">
@@ -264,7 +255,7 @@ export default function FieldNotes() {
                   <span>•</span>
                   <span>{selectedArticle.date}</span>
                 </div>
-                <span>{selectedArticle.readTime}</span>
+                <span>{selectedArticle.read_time}</span>
               </div>
 
               <div className="font-body text-base text-th-dark/90 leading-relaxed whitespace-pre-line">

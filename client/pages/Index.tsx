@@ -1,47 +1,72 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Article, Course } from "@shared/api";
 
-const articles = [
-  {
-    id: 1,
-    category: "PHYSIOLOGY",
-    title: "Hard-Packed vs. Loose Scree: A Paw Study",
-    excerpt:
-      "New research on how different mountain terrains impact joint wear in high-activity breeds.",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=192",
-    href: "/field-notes",
-  },
-  {
-    id: 2,
-    category: "BEHAVIOR",
-    title: "Recall in High-Prey Environments",
-    excerpt:
-      "Training protocols for maintaining focus when wildlife enters the frame.",
-    thumbnail:
-      "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=192",
-    href: "/field-notes",
-  },
-];
+interface ArticleDisplay {
+  id: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  thumbnail: string;
+  href: string;
+}
 
-const courses = [
-  {
-    id: 1,
-    badge: "COMING SOON",
-    title: "Basecamp: Level 1 and Level 2",
-    description: "First aid for the trail, the road, and everywhere in between.",
-  },
-  {
-    id: 2,
-    badge: "COMING SOON",
-    title: "The Ascent — For Working Professionals & Outdoor Enthusiasts",
-    description:
-      "Field-ready veterinary first aid for the environments where your dog works.",
-  },
-];
+interface CourseDisplay {
+  id: string;
+  badge: string;
+  title: string;
+  description: string;
+}
 
 export default function Index() {
+  const [articles, setArticles] = useState<ArticleDisplay[]>([]);
+  const [courses, setCourses] = useState<CourseDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedContent = async () => {
+      try {
+        const [articlesRes, coursesRes] = await Promise.all([
+          fetch("/api/articles/featured"),
+          fetch("/api/courses/featured"),
+        ]);
+
+        const articlesData = await articlesRes.json();
+        const coursesData = await coursesRes.json();
+
+        const mappedArticles = (articlesData.data || [])
+          .slice(0, 2)
+          .map((a: Article): ArticleDisplay => ({
+            id: a.id,
+            category: a.category,
+            title: a.title,
+            excerpt: a.excerpt,
+            thumbnail: a.thumbnail || a.image,
+            href: "/field-notes",
+          }));
+
+        const mappedCourses = (coursesData.data || [])
+          .slice(0, 2)
+          .map((c: Course): CourseDisplay => ({
+            id: c.id,
+            badge: "AVAILABLE",
+            title: c.title,
+            description: c.description,
+          }));
+
+        setArticles(mappedArticles);
+        setCourses(mappedCourses);
+      } catch (error) {
+        console.error("Failed to fetch featured content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedContent();
+  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />

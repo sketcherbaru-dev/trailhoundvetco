@@ -1,23 +1,15 @@
 import { RequestHandler } from 'express';
 import { supabaseServiceClient } from '../lib/supabase';
+import { CourseSchema } from '@shared/schemas';
+import { ZodError } from 'zod';
 
 export const createCourse: RequestHandler = async (req, res) => {
   try {
-    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
+    const validated = CourseSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('courses')
-      .insert([{
-        title,
-        description,
-        level,
-        format,
-        thumbnail,
-        category,
-        curriculum,
-        stripe_product_id,
-        featured,
-      }])
+      .insert([validated])
       .select()
       .single();
 
@@ -28,6 +20,10 @@ export const createCourse: RequestHandler = async (req, res) => {
 
     res.status(201).json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create course' });
   }
 };
@@ -35,21 +31,11 @@ export const createCourse: RequestHandler = async (req, res) => {
 export const updateCourse: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured } = req.body;
+    const validated = CourseSchema.parse(req.body);
 
     const { data, error } = await supabaseServiceClient
       .from('courses')
-      .update({
-        title,
-        description,
-        level,
-        format,
-        thumbnail,
-        category,
-        curriculum,
-        stripe_product_id,
-        featured,
-      })
+      .update(validated)
       .eq('id', id)
       .select()
       .single();
@@ -61,6 +47,10 @@ export const updateCourse: RequestHandler = async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Validation failed', details: error.errors });
+      return;
+    }
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to update course' });
   }
 };

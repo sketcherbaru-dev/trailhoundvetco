@@ -75,14 +75,18 @@ const AdminProducts = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save product");
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.error || "Failed to save product");
+      }
 
       await fetchProducts();
       resetForm();
       setIsOpen(false);
       toast.success(editingId ? "Product updated" : "Product created");
     } catch (error) {
-      toast.error("Failed to save product");
+      const message = error instanceof Error ? error.message : "Failed to save product";
+      toast.error(message);
       console.error(error);
     }
   };

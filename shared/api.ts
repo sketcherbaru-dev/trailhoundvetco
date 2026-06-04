@@ -23,7 +23,7 @@ export interface Article {
   thumbnail: string;
   image: string;
   date: string;
-  readTime: string;
+  read_time: string;
   featured: boolean;
   created_at: string;
   updated_at: string;

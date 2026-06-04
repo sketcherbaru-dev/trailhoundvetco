@@ -1,46 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminArticles from "@/components/admin/AdminArticles";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminCourses from "@/components/admin/AdminCourses";
 import AdminPodcasts from "@/components/admin/AdminPodcasts";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { adminLogin, adminLogout, getAdminSession } from "@/lib/adminAuth";
+import { toast } from "sonner";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showLoginForm, setShowLoginForm] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
 
   useEffect(() => {
-    // Check if admin session exists
-    const adminToken = localStorage.getItem("admin_token");
-    if (adminToken === "authenticated") {
+    const session = getAdminSession();
+    if (session) {
       setIsAuthenticated(true);
       setShowLoginForm(false);
+      setAdminEmail(session.email);
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple authentication - in production use proper auth
-    if (password === "admin123") {
-      localStorage.setItem("admin_token", "authenticated");
+    setLoading(true);
+
+    try {
+      const session = await adminLogin(email, password);
       setIsAuthenticated(true);
       setShowLoginForm(false);
+      setAdminEmail(session.email);
+      setEmail("");
       setPassword("");
-    } else {
-      alert("Password salah");
+      toast.success("Login successful");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Login failed";
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    setIsAuthenticated(false);
-    setShowLoginForm(true);
-    setPassword("");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await adminLogout();
+      setIsAuthenticated(false);
+      setShowLoginForm(true);
+      setAdminEmail("");
+      toast.success("Logged out");
+      navigate("/");
+    } catch (error) {
+      toast.error("Logout failed");
+    }
   };
 
   if (showLoginForm && !isAuthenticated) {

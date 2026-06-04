@@ -75,14 +75,18 @@ const AdminCourses = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save course");
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.error || "Failed to save course");
+      }
 
       await fetchCourses();
       resetForm();
       setIsOpen(false);
       toast.success(editingId ? "Course updated" : "Course created");
     } catch (error) {
-      toast.error("Failed to save course");
+      const message = error instanceof Error ? error.message : "Failed to save course";
+      toast.error(message);
       console.error(error);
     }
   };
