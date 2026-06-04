@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import { Product, ProductsResponse } from "@shared/api";
 
 const categories = [
   { id: "all", label: "All Products" },
@@ -22,19 +23,7 @@ const badgeStyles: Record<BadgeType, string> = {
   "EXTERNAL": "bg-th-mint text-th-dark",
 };
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  badge: BadgeType;
-  category: string;
-  image: string;
-  external?: boolean;
-  href: string;
-}
-
-const products: Product[] = [
+const defaultProducts: Product[] = [
   {
     id: 1,
     name: "Trailhound Field Guide: First Aid for Pets",
@@ -138,7 +127,35 @@ const products: Product[] = [
 ];
 
 export default function Shop() {
+  const [products, setProducts] = useState<Product[]>(defaultProducts);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/products');
+        const data: ProductsResponse = await response.json();
+
+        if (data.error) {
+          setError(data.error);
+          setProducts(defaultProducts);
+        } else {
+          setProducts(data.data || defaultProducts);
+          setError(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch products');
+        setProducts(defaultProducts);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filtered =
     activeCategory === "all"
@@ -234,8 +251,17 @@ export default function Shop() {
       {/* Product Grid */}
       <section className="py-16 flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((product) => (
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <p className="text-th-teal font-body">Loading products...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex items-center justify-center py-12">
+              <p className="text-th-teal font-body">No products found in this category.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filtered.map((product) => (
               <div
                 key={product.id}
                 className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
@@ -309,8 +335,9 @@ export default function Shop() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

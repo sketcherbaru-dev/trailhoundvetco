@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { articles, Article } from "@/data/articles";
+import { Article, ArticlesResponse } from "@shared/api";
 
 const categories = [
   { id: "all", label: "All Notes" },
@@ -16,9 +16,29 @@ export default function FieldNotes() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParamQuery = searchParams.get("search") || "";
 
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState(searchParamQuery);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/articles');
+        const data: ArticlesResponse = await response.json();
+        setArticles(data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch articles:', err);
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   // Sync search query state with URL param
   useEffect(() => {
