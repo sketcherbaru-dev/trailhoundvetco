@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { db } from "./_db";
+import { db } from "../_db";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -8,18 +8,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    const page = (req.query.page as string) || "home";
     const { data, error } = await db
-      .from("hero_images")
+      .from("products")
       .select("*")
-      .eq("active", true)
-      .eq("page", page)
-      .order("display_order", { ascending: true })
-      .limit(6);
+      .eq("field_guide_featured", true)
+      .limit(1)
+      .maybeSingle();
 
-    if (error) return res.status(400).json({ data: [], error: error.message });
-    res.json({ data: data || [] });
+    if (error) return res.status(400).json({ data: null, error: error.message });
+    res.json({ data: data || null });
   } catch (error) {
-    res.status(500).json({ data: [], error: "Failed to fetch hero images" });
+    res.status(500).json({ data: null, error: "Failed to fetch featured product" });
   }
 }

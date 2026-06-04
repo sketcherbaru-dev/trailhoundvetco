@@ -1,20 +1,17 @@
 import { RequestHandler } from 'express';
 import { supabaseAnonClient } from '../lib/supabase';
 
-export const getHeroImages: RequestHandler = async (req, res) => {
+export const getPackTestimonials: RequestHandler = async (_req, res) => {
   try {
-    const page = (req.query.page as string) || 'home';
     const { data, error } = await supabaseAnonClient
-      .from('hero_images')
+      .from('pack_testimonials')
       .select('*')
       .eq('active', true)
-      .eq('page', page)
-      .order('display_order', { ascending: true })
-      .limit(6);
+      .order('display_order', { ascending: true });
 
     if (error) { res.status(400).json({ data: [], error: error.message }); return; }
     res.json({ data: data || [] });
   } catch {
-    res.status(500).json({ data: [], error: 'Failed to fetch hero images' });
+    res.status(500).json({ data: [], error: 'Failed to fetch testimonials' });
   }
 };

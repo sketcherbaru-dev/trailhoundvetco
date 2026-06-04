@@ -61,12 +61,6 @@ export default function Navbar() {
 
         {/* Right: Icons + Mobile Trigger */}
         <div className="flex items-center gap-5">
-          <Link
-            to="/admin"
-            className="hidden sm:block px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
-          >
-            Admin
-          </Link>
           {/* Search bar expandable container */}
           {searchOpen ? (
             <form
@@ -149,13 +143,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link
-            to="/admin"
-            onClick={() => setMobileOpen(false)}
-            className="font-body text-base py-3 px-2 text-white bg-blue-600 rounded-lg font-medium text-center mt-2"
-          >
-            Admin
-          </Link>
         </div>
       )}
     </header>

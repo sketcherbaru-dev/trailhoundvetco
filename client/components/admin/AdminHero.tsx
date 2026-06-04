@@ -7,7 +7,18 @@ import { HeroImage } from "@shared/api";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/imageUpload";
 
+const PAGE_OPTIONS = [
+  { value: "home", label: "Home" },
+  { value: "field-guide", label: "Field Guide" },
+  { value: "basecamp-courses", label: "Basecamp Courses" },
+  { value: "field-notes", label: "Field Notes" },
+  { value: "the-pack", label: "The Pack" },
+  { value: "shop", label: "Shop" },
+  { value: "contact", label: "Contact" },
+];
+
 const AdminHero = () => {
+  const [activePage, setActivePage] = useState("home");
   const [images, setImages] = useState<HeroImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -20,14 +31,15 @@ const AdminHero = () => {
     subtitle: "",
     display_order: 0,
     active: true,
+    page: "home",
   });
 
-  useEffect(() => { fetchImages(); }, []);
+  useEffect(() => { fetchImages(); }, [activePage]);
 
   const fetchImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/hero-images");
+      const response = await fetch(`/api/hero-images?page=${activePage}`);
       const data = await response.json();
       setImages(data.data || []);
     } catch {
@@ -48,7 +60,7 @@ const AdminHero = () => {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, page: activePage }),
       });
 
       if (!response.ok) {
@@ -96,7 +108,7 @@ const AdminHero = () => {
   };
 
   const resetForm = () => {
-    setFormData({ image_url: "", title: "", subtitle: "", display_order: images.length, active: true });
+    setFormData({ image_url: "", title: "", subtitle: "", display_order: images.length, active: true, page: activePage });
     setEditingId(null);
   };
 
@@ -107,18 +119,41 @@ const AdminHero = () => {
       subtitle: img.subtitle || "",
       display_order: img.display_order,
       active: img.active,
+      page: img.page,
     });
     setEditingId(img.id);
     setIsOpen(true);
   };
 
+  const pageLabel = PAGE_OPTIONS.find((p) => p.value === activePage)?.label ?? activePage;
+
   return (
     <div className="space-y-6">
+      {/* Page Selector */}
+      <div className="bg-white rounded-lg border p-4">
+        <p className="text-sm font-medium text-gray-500 mb-3">Select page to manage hero images:</p>
+        <div className="flex flex-wrap gap-2">
+          {PAGE_OPTIONS.map((p) => (
+            <button
+              key={p.value}
+              onClick={() => setActivePage(p.value)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activePage === p.value
+                  ? "bg-orange-500 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Hero Images</h2>
+          <h2 className="text-2xl font-bold">Hero Images — {pageLabel}</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Upload up to 6 images for the homepage hero carousel. Images display in order.
+            Up to 6 images for <strong>{pageLabel}</strong> hero. If only 1 image is set, no carousel will be shown.
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) resetForm(); }}>
@@ -133,7 +168,7 @@ const AdminHero = () => {
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>{editingId ? "Edit Hero Image" : "Add Hero Image"}</DialogTitle>
+              <DialogTitle>{editingId ? "Edit Hero Image" : `Add Hero Image — ${pageLabel}`}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -209,8 +244,8 @@ const AdminHero = () => {
         <div className="text-center py-8 text-gray-500">Loading...</div>
       ) : images.length === 0 ? (
         <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
-          <p className="text-lg font-medium">No hero images yet</p>
-          <p className="text-sm mt-1">Add up to 6 images to show in the homepage hero carousel.</p>
+          <p className="text-lg font-medium">No hero images for {pageLabel}</p>
+          <p className="text-sm mt-1">Add up to 6 images. With only 1 image, no carousel is shown.</p>
         </div>
       ) : (
         <div className="bg-white rounded-lg border overflow-hidden">
