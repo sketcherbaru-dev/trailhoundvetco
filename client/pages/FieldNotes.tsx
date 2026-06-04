@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { Article, ArticlesResponse } from "@shared/api";
 import { Article } from "@shared/api";
 
 const categories = [
@@ -21,8 +20,6 @@ export default function FieldNotes() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParamQuery = searchParams.get("search") || "";
 
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState(searchParamQuery);
   const [selectedArticle, setSelectedArticle] = useState<ArticleDisplay | null>(null);
@@ -48,24 +45,6 @@ export default function FieldNotes() {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch articles");
-        setArticles([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/articles');
-        const data: ArticlesResponse = await response.json();
-        setArticles(data.data || []);
-      } catch (err) {
-        console.error('Failed to fetch articles:', err);
         setArticles([]);
       } finally {
         setLoading(false);

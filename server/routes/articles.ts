@@ -53,18 +53,12 @@ export const getArticleById: RequestHandler = async (req, res) => {
 
 export const getFeaturedArticles: RequestHandler = async (req, res) => {
   try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 5;
-    let query = supabaseAnonClient
+    const { data, error } = await supabaseAnonClient
       .from('articles')
       .select('*')
       .eq('featured', true)
-      .order('date', { ascending: false });
-
-    if (limit && limit > 0) {
-      query = query.limit(limit);
-    }
-
-    const { data, error } = await query;
+      .order('date', { ascending: false })
+      .limit(5);
 
     if (error) {
       res.status(400).json({ data: null, error: error.message } as ArticleResponse);

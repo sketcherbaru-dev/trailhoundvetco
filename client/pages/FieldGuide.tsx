@@ -1,28 +1,41 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Article, ArticlesResponse } from "@shared/api";
 
-const defaultArticles = [
+const fieldNoteArticles = [
   {
-    id: "1",
+    id: 1,
     badge: "ESSENTIAL READING",
+    badgeBg: "bg-th-brown",
     title: "Winter Expedition Manual",
     description:
       "Managing cold stress, paw protection strategies, and nutrition for sub-zero performance in feline and canine companions.",
     image:
       "https://api.builder.io/api/v1/image/assets/TEMP/e8c4f1d9ecb8b25906a4b4cffceef6f307c475a9?width=800",
-    category: "",
-    content: "",
-    author: "",
-    thumbnail: "",
-    date: "",
-    readTime: "",
-    featured: false,
-    created_at: "",
-    updated_at: "",
-  } as any,
+    href: "/field-notes",
+  },
+  {
+    id: 2,
+    badge: "BEHAVIOR",
+    badgeBg: "bg-th-teal",
+    title: "High-Prey Behavior",
+    description:
+      "Training methods for maintaining off-leash control in wildlife-dense environments without compromising the animal's natural drive.",
+    image:
+      "https://api.builder.io/api/v1/image/assets/TEMP/324577372dab7b1eedb53d86d271a785340f874c?width=800",
+    href: "/field-notes",
+  },
+  {
+    id: 3,
+    badge: "NUTRITION",
+    badgeBg: "bg-th-dark-teal",
+    title: "Nutrition for Performance",
+    description:
+      "Fueling for the 20-mile day. Caloric density, hydration electrolytes, and recovery supplements for high-output breeds.",
+    image:
+      "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=800",
+    href: "/field-notes",
+  },
 ];
 
 const bookFeatures = [
@@ -32,26 +45,6 @@ const bookFeatures = [
 ];
 
 export default function FieldGuide() {
-  const [articles, setArticles] = useState<Article[]>(defaultArticles);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/articles/featured?limit=3');
-        const data: ArticlesResponse = await response.json();
-        setArticles(data.data && data.data.length > 0 ? data.data : defaultArticles);
-      } catch (err) {
-        console.error('Failed to fetch articles:', err);
-        setArticles(defaultArticles);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
@@ -187,55 +180,47 @@ export default function FieldGuide() {
           </div>
 
           {/* Article Cards */}
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-th-teal font-body">Loading articles...</p>
-            </div>
-          ) : articles.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-th-teal font-body">No articles found.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map((article) => (
-                <Link
-                  key={article.id}
-                  to="/field-notes"
-                  className="group flex flex-col rounded-xl overflow-hidden border border-th-warm-mid bg-white hover:shadow-lg transition-shadow duration-300"
-                >
-                  {/* Card Image */}
-                  <div className="relative h-52 overflow-hidden bg-th-warm-dim">
-                    <img
-                      src={article.thumbnail || article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-th-brown text-th-cream font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm">
-                        {article.category || "FIELD NOTES"}
-                      </span>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {fieldNoteArticles.map((article) => (
+              <Link
+                key={article.id}
+                to={article.href}
+                className="group flex flex-col rounded-xl overflow-hidden border border-th-warm-mid bg-white hover:shadow-lg transition-shadow duration-300"
+              >
+                {/* Card Image */}
+                <div className="relative h-52 overflow-hidden bg-th-warm-dim">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span
+                      className={`${article.badgeBg} text-th-cream font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm`}
+                    >
+                      {article.badge}
+                    </span>
                   </div>
+                </div>
 
-                  {/* Card Content */}
-                  <div className="flex flex-col gap-2 p-5 flex-1">
-                    <h3 className="font-heading text-lg font-bold text-th-dark leading-snug group-hover:text-th-orange transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="font-body text-sm text-th-dark/70 leading-relaxed flex-1">
-                      {article.excerpt}
-                    </p>
-                    <div className="flex items-center gap-1.5 text-th-orange font-body text-sm font-bold mt-3">
-                      Read Field Note
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                {/* Card Content */}
+                <div className="flex flex-col gap-2 p-5 flex-1">
+                  <h3 className="font-heading text-lg font-bold text-th-dark leading-snug group-hover:text-th-orange transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="font-body text-sm text-th-dark/70 leading-relaxed flex-1">
+                    {article.description}
+                  </p>
+                  <div className="flex items-center gap-1.5 text-th-orange font-body text-sm font-bold mt-3">
+                    Read Field Note
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                   </div>
-                </Link>
-              ))}
-            </div>
-          )}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

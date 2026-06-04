@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { Course, CoursesResponse } from "@shared/api";
 import { Course } from "@shared/api";
 
 const filters = [
@@ -28,9 +27,6 @@ interface CourseDisplay extends Course {
 }
 
 export default function BasecampCourses() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [courses, setCourses] = useState<CourseDisplay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,40 +59,10 @@ export default function BasecampCourses() {
     fetchCourses();
   }, []);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/courses');
-        const data: CoursesResponse = await response.json();
-
-        if (data.error) {
-          setError(data.error);
-          setCourses([]);
-        } else {
-          setCourses(data.data || []);
-          setError(null);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch courses');
-        setCourses([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, []);
-
   const filtered =
     activeFilter === "all"
       ? courses
       : courses.filter((c) => c.category === activeFilter);
-
-  const getLevelStyle = (level: string): string => {
-    const normalizedLevel = level as LevelKey;
-    return levelStyles[normalizedLevel] || "bg-th-orange text-white";
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
@@ -184,73 +150,59 @@ export default function BasecampCourses() {
       {/* Course List */}
       <section id="courses" className="py-12 bg-th-cream flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-th-teal font-body">Loading courses...</p>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-red-600 font-body">Error: {error}</p>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-th-teal font-body">No courses found for this category.</p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-5">
-              {filtered.map((course) => (
-                <div
-                  key={course.id}
-                  className="flex flex-col sm:flex-row rounded-xl overflow-hidden bg-white border border-th-warm-mid hover:shadow-md transition-shadow duration-300"
-                >
-                  {/* Thumbnail */}
-                  <div className="w-full sm:w-48 md:w-56 h-44 sm:h-auto flex-shrink-0 overflow-hidden bg-th-warm-dim">
-                    <img
-                      src={course.thumbnail}
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 flex flex-col justify-between p-6 gap-4">
-                    {/* Meta row */}
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                      <div className="flex items-center gap-2 text-th-teal font-body text-xs font-semibold">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
-                        </svg>
-                        {course.format}
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded font-body text-xs font-semibold ${
-                          getLevelStyle(course.level)
-                        }`}
-                      >
-                        {course.level}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h3 className="font-heading text-xl font-bold text-th-dark leading-snug mb-2">
-                        {course.title}
-                      </h3>
-                      <p className="font-body text-sm text-th-dark/70 leading-relaxed">
-                        {course.description}
-                      </p>
-                    </div>
-
-                    <Link
-                      to="#"
-                      className="w-full py-3 bg-th-orange text-white font-body font-bold text-sm rounded-lg text-center hover:bg-orange-600 transition-colors"
-                    >
-                      Learn More
-                    </Link>
-                  </div>
+          <div className="flex flex-col gap-5">
+            {filtered.map((course) => (
+              <div
+                key={course.id}
+                className="flex flex-col sm:flex-row rounded-xl overflow-hidden bg-white border border-th-warm-mid hover:shadow-md transition-shadow duration-300"
+              >
+                {/* Thumbnail */}
+                <div className="w-full sm:w-48 md:w-56 h-44 sm:h-auto flex-shrink-0 overflow-hidden bg-th-warm-dim">
+                  <img
+                    src={course.thumbnail}
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              ))}
-            </div>
-          )}
+
+                {/* Content */}
+                <div className="flex-1 flex flex-col justify-between p-6 gap-4">
+                  {/* Meta row */}
+                  <div className="flex items-center justify-between gap-4 flex-wrap">
+                    <div className="flex items-center gap-2 text-th-teal font-body text-xs font-semibold">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
+                      </svg>
+                      {course.format}
+                    </div>
+                    <span
+                      className={`px-3 py-1 rounded font-body text-xs font-semibold ${
+                        levelStyles[course.level]
+                      }`}
+                    >
+                      {course.level}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="font-heading text-xl font-bold text-th-dark leading-snug mb-2">
+                      {course.title}
+                    </h3>
+                    <p className="font-body text-sm text-th-dark/70 leading-relaxed">
+                      {course.description}
+                    </p>
+                  </div>
+
+                  <Link
+                    to="#"
+                    className="w-full py-3 bg-th-orange text-white font-body font-bold text-sm rounded-lg text-center hover:bg-orange-600 transition-colors"
+                  >
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
