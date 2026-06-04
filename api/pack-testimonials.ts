@@ -8,18 +8,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    const page = (req.query.page as string) || "home";
     const { data, error } = await db
-      .from("hero_images")
+      .from("pack_testimonials")
       .select("*")
       .eq("active", true)
-      .eq("page", page)
-      .order("display_order", { ascending: true })
-      .limit(6);
+      .order("display_order", { ascending: true });
 
     if (error) return res.status(400).json({ data: [], error: error.message });
     res.json({ data: data || [] });
   } catch (error) {
-    res.status(500).json({ data: [], error: "Failed to fetch hero images" });
+    res.status(500).json({ data: [], error: "Failed to fetch testimonials" });
   }
 }

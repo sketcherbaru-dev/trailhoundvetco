@@ -24,6 +24,7 @@ const AdminProducts = () => {
     external_link: "",
     stripe_product_id: "",
     featured: false,
+    field_guide_featured: false,
   });
   const [uploading, setUploading] = useState(false);
 
@@ -121,6 +122,7 @@ const AdminProducts = () => {
       external_link: product.external_link || "",
       stripe_product_id: product.stripe_product_id || "",
       featured: product.featured,
+      field_guide_featured: product.field_guide_featured || false,
     });
     setEditingId(product.id);
     setIsOpen(true);
@@ -137,6 +139,7 @@ const AdminProducts = () => {
       external_link: "",
       stripe_product_id: "",
       featured: false,
+      field_guide_featured: false,
     });
     setEditingId(null);
   };
@@ -248,17 +251,31 @@ const AdminProducts = () => {
                 />
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                  className="mr-2"
-                />
-                <label htmlFor="featured" className="text-sm font-medium">
-                  Featured Product
-                </label>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="featured" className="text-sm font-medium">
+                    Featured Product (Shop page)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="field_guide_featured"
+                    checked={formData.field_guide_featured}
+                    onChange={(e) => setFormData({ ...formData, field_guide_featured: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="field_guide_featured" className="text-sm font-medium">
+                    Field Guide Best Seller (shows in Field Guide page)
+                  </label>
+                </div>
               </div>
 
               <div className="flex gap-4 pt-4">
@@ -290,6 +307,7 @@ const AdminProducts = () => {
                 <TableHead>Price</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Featured</TableHead>
+                <TableHead>Field Guide</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -300,6 +318,7 @@ const AdminProducts = () => {
                   <TableCell>${product.price.toFixed(2)}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.featured ? "✓" : "—"}</TableCell>
+                  <TableCell>{product.field_guide_featured ? "✓" : "—"}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

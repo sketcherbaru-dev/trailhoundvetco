@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "0.0.0.0",
     port: 8080,
-    allowedHosts: "all",
+    allowedHosts: true,
     hmr: false,
     fs: {
       allow: ["./client", "./shared", "index.html"],

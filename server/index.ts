@@ -11,6 +11,10 @@ import { createCourse, updateCourse, deleteCourse } from "./routes/admin-courses
 import { createPodcast, updatePodcast, deletePodcast } from "./routes/admin-podcasts";
 import { subscribe } from "./routes/subscribe";
 import { getHeroImages } from "./routes/hero-images";
+import { getFieldGuideFeaturedProduct } from "./routes/products-field-guide-featured";
+import { getPackFieldReports } from "./routes/pack-field-reports";
+import { getPackTestimonials } from "./routes/pack-testimonials";
+import { getPackGallery } from "./routes/pack-gallery";
 
 export function createServer() {
   const app = express();
@@ -69,6 +73,14 @@ export function createServer() {
 
   // Hero images
   app.get("/api/hero-images", getHeroImages);
+
+  // Field Guide featured product
+  app.get("/api/products/field-guide-featured", getFieldGuideFeaturedProduct);
+
+  // The Pack data
+  app.get("/api/pack-field-reports", getPackFieldReports);
+  app.get("/api/pack-testimonials", getPackTestimonials);
+  app.get("/api/pack-gallery", getPackGallery);
 
   return app;
 }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
-import { Article } from "@shared/api";
+import { Article, Product } from "@shared/api";
 
 const categoryBg: Record<string, string> = {
   PHYSIOLOGY: "bg-th-brown",
@@ -13,7 +13,7 @@ const categoryBg: Record<string, string> = {
   TRAINING: "bg-th-dark",
 };
 
-const bookFeatures = [
+const DEFAULT_FEATURES = [
   "Build for the moments you don't plan for.",
   "Everything you need to handle emergencies on the trail with confidence.",
   "Step-by-step triage for emergent situations.",
@@ -21,11 +21,17 @@ const bookFeatures = [
 
 export default function FieldGuide() {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     fetch("/api/articles")
       .then((r) => r.json())
       .then((res) => setArticles((res.data || []).slice(0, 3)))
+      .catch(() => {});
+
+    fetch("/api/products/field-guide-featured")
+      .then((r) => r.json())
+      .then((res) => setFeaturedProduct(res.data || null))
       .catch(() => {});
   }, []);
 
@@ -68,71 +74,87 @@ export default function FieldGuide() {
       </section>
 
       {/* Book Product Section */}
-      <section id="book" className="py-20 bg-th-warm">
-        <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Book Cover */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative max-w-sm w-full">
-                <div className="absolute inset-0 -rotate-2 bg-th-warm-mid rounded-xl blur-sm opacity-60" />
-                <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800"
-                  alt="Trailhound Field Guide Book Cover"
-                  className="relative w-full rounded-xl shadow-2xl"
-                />
-              </div>
-            </div>
-
-            {/* Book Info */}
-            <div className="flex flex-col gap-6">
-              {/* Best Seller Badge */}
-              <div className="inline-flex self-start">
-                <span className="font-body text-xs font-semibold text-th-brown border border-th-brown/30 bg-th-light-peach px-3 py-1.5 rounded-sm tracking-widest uppercase">
-                  BEST SELLER
-                </span>
+      {featuredProduct !== undefined && (
+        <section id="book" className="py-20 bg-th-warm">
+          <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              {/* Book Cover */}
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative max-w-sm w-full">
+                  <div className="absolute inset-0 -rotate-2 bg-th-warm-mid rounded-xl blur-sm opacity-60" />
+                  <img
+                    src={featuredProduct?.image || "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800"}
+                    alt={featuredProduct?.name || "Trailhound Field Guide Book Cover"}
+                    className="relative w-full rounded-xl shadow-2xl"
+                  />
+                </div>
               </div>
 
-              <div>
-                <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-dark leading-tight mb-4">
-                  Trailhound Field Guide: First Aid for Pets
-                </h2>
-                <p className="font-body text-th-dark/70 text-base leading-relaxed">
-                  This field guide was written due to one single, and powerful
-                  truth: when something goes wrong in the field, the person
-                  holding the leash becomes the first responder.
-                </p>
+              {/* Book Info */}
+              <div className="flex flex-col gap-6">
+                {/* Best Seller Badge */}
+                <div className="inline-flex self-start">
+                  <span className="font-body text-xs font-semibold text-th-brown border border-th-brown/30 bg-th-light-peach px-3 py-1.5 rounded-sm tracking-widest uppercase">
+                    {featuredProduct?.badge || "BEST SELLER"}
+                  </span>
+                </div>
+
+                <div>
+                  <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-dark leading-tight mb-4">
+                    {featuredProduct?.name || "Trailhound Field Guide: First Aid for Pets"}
+                  </h2>
+                  <p className="font-body text-th-dark/70 text-base leading-relaxed">
+                    {featuredProduct?.description || "This field guide was written due to one single, and powerful truth: when something goes wrong in the field, the person holding the leash becomes the first responder."}
+                  </p>
+                </div>
+
+                {/* Feature Bullets */}
+                <ul className="flex flex-col gap-3">
+                  {DEFAULT_FEATURES.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-th-orange/10 flex items-center justify-center mt-0.5">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M20 6L9 17l-5-5"
+                            stroke="#F45E15"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <span className="font-body text-th-dark/80 text-base leading-snug">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Price + CTA */}
+                {featuredProduct && (
+                  <p className="font-heading text-2xl font-bold text-th-dark">
+                    ${featuredProduct.price.toFixed(2)}
+                  </p>
+                )}
+                {featuredProduct?.external_link ? (
+                  <a
+                    href={featuredProduct.external_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 bg-th-orange text-white font-body font-bold text-lg rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.15)] mt-2 text-center block"
+                  >
+                    Buy Now
+                  </a>
+                ) : (
+                  <button className="w-full py-4 bg-th-orange text-white font-body font-bold text-lg rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.15)] mt-2">
+                    Pre-Order
+                  </button>
+                )}
               </div>
-
-              {/* Feature Bullets */}
-              <ul className="flex flex-col gap-3">
-                {bookFeatures.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-th-orange/10 flex items-center justify-center mt-0.5">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                        <path
-                          d="M20 6L9 17l-5-5"
-                          stroke="#F45E15"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span className="font-body text-th-dark/80 text-base leading-snug">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <button className="w-full py-4 bg-th-orange text-white font-body font-bold text-lg rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.15)] mt-2">
-                Pre-Order
-              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Field Notes Section */}
       <section className="py-20 bg-white">
