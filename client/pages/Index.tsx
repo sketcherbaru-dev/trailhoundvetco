@@ -1,47 +1,76 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Article, ArticlesResponse, Course, CoursesResponse } from "@shared/api";
 
-const articles = [
+const defaultArticles = [
   {
-    id: 1,
+    id: "1",
     category: "PHYSIOLOGY",
     title: "Hard-Packed vs. Loose Scree: A Paw Study",
     excerpt:
       "New research on how different mountain terrains impact joint wear in high-activity breeds.",
     thumbnail:
       "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=192",
-    href: "/field-notes",
-  },
+    content: "",
+    author: "",
+    date: "",
+    readTime: "",
+    featured: false,
+    created_at: "",
+    updated_at: "",
+  } as Article,
   {
-    id: 2,
+    id: "2",
     category: "BEHAVIOR",
     title: "Recall in High-Prey Environments",
     excerpt:
       "Training protocols for maintaining focus when wildlife enters the frame.",
     thumbnail:
       "https://api.builder.io/api/v1/image/assets/TEMP/5d21bb830868bedc9ed342721e99656d4f3f05c3?width=192",
-    href: "/field-notes",
-  },
-];
-
-const courses = [
-  {
-    id: 1,
-    badge: "COMING SOON",
-    title: "Basecamp: Level 1 and Level 2",
-    description: "First aid for the trail, the road, and everywhere in between.",
-  },
-  {
-    id: 2,
-    badge: "COMING SOON",
-    title: "The Ascent — For Working Professionals & Outdoor Enthusiasts",
-    description:
-      "Field-ready veterinary first aid for the environments where your dog works.",
-  },
+    content: "",
+    author: "",
+    date: "",
+    readTime: "",
+    featured: false,
+    created_at: "",
+    updated_at: "",
+  } as Article,
 ];
 
 export default function Index() {
+  const [articles, setArticles] = useState<Article[]>(defaultArticles);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [articlesRes, coursesRes] = await Promise.all([
+          fetch('/api/articles/featured?limit=2'),
+          fetch('/api/courses/featured'),
+        ]);
+
+        const articlesData: ArticlesResponse = await articlesRes.json();
+        const coursesData: CoursesResponse = await coursesRes.json();
+
+        if (articlesData.data && articlesData.data.length > 0) {
+          setArticles(articlesData.data);
+        }
+        if (coursesData.data && coursesData.data.length > 0) {
+          setCourses(coursesData.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
