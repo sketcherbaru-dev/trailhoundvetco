@@ -6,12 +6,6 @@ const db = createClient(
   process.env.SUPABASE_ANON_KEY || ""
 );
 
-const setCors = (res: VercelResponse) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-};
-
 const mapArticle = (a: any) => ({
   ...a,
   readTime: a.read_time || "5 min read",
@@ -19,18 +13,20 @@ const mapArticle = (a: any) => ({
 });
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  setCors(res);
+  res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
     const { data, error } = await db
       .from("articles")
       .select("*")
-      .order("date", { ascending: false });
+      .eq("featured", true)
+      .order("date", { ascending: false })
+      .limit(5);
 
     if (error) return res.status(400).json({ data: [], error: error.message });
     res.json({ data: (data || []).map(mapArticle) });
   } catch (error) {
-    res.status(500).json({ data: [], error: "Failed to fetch articles" });
+    res.status(500).json({ data: [], error: "Failed to fetch featured articles" });
   }
 }
