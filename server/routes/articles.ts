@@ -75,3 +75,26 @@ export const getFeaturedArticles: RequestHandler = async (req, res) => {
     } as ArticlesResponse);
   }
 };
+
+export const getHomeFeaturedArticles: RequestHandler = async (_req, res) => {
+  try {
+    const { data, error } = await supabaseAnonClient
+      .from('articles')
+      .select('*')
+      .eq('home_featured', true)
+      .order('date', { ascending: false })
+      .limit(3);
+
+    if (error) {
+      res.status(400).json({ data: [], error: error.message } as ArticlesResponse);
+      return;
+    }
+
+    res.json({ data: (data || []).map(mapArticle) } as ArticlesResponse);
+  } catch (error) {
+    res.status(500).json({
+      data: [],
+      error: error instanceof Error ? error.message : 'Failed to fetch home featured articles',
+    } as ArticlesResponse);
+  }
+};

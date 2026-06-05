@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { getArticles, getArticleById, getFeaturedArticles } from "./routes/articles";
+import { getArticles, getArticleById, getFeaturedArticles, getHomeFeaturedArticles } from "./routes/articles";
 import { getProducts, getProductById, getFeaturedProducts } from "./routes/products";
 import { getCourses, getCourseById, getFeaturedCourses } from "./routes/courses";
 import { getPodcasts, getPodcastById } from "./routes/podcasts";
@@ -32,9 +32,10 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
-  // Articles routes
+  // Articles routes — specific paths must come before /:id
   app.get("/api/articles", getArticles);
   app.get("/api/articles/featured", getFeaturedArticles);
+  app.get("/api/articles/home-featured", getHomeFeaturedArticles);
   app.get("/api/articles/:id", getArticleById);
 
   // Products routes
