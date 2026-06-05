@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
+import { useHeroImages } from "@/hooks/useHeroImages";
 
 const STATIC_REPORTS: FieldReport[] = [
   { id: "1", badge: "SUMMIT DOG", badge_color: "bg-th-teal", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/ad8f3a13ae04700fff0d5e5575df04c10274c8fc?width=600", quote: "Finding a community that understands the risks of high-altitude hiking changed everything for us.", attribution: "MARCUS & LUNA", display_order: 0, active: true, created_at: "", updated_at: "" },
@@ -29,7 +30,10 @@ const STATIC_GALLERY: PackGalleryImage[] = [
   { id: "8", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=600", alt_text: "Cat in nature", display_order: 7, active: true, created_at: "", updated_at: "" },
 ];
 
+const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
+
 export default function ThePack() {
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("the-pack");
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [testimonials, setTestimonials] = useState<PackTestimonial[]>([]);
   const [gallery, setGallery] = useState<PackGalleryImage[]>([]);
@@ -60,11 +64,15 @@ export default function ThePack() {
       {/* Hero Section */}
       <section className="relative min-h-[65vh] flex items-end overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560"
-            alt="Life with a pack"
-            className="w-full h-full object-cover object-top"
-          />
+          {heroImages.length > 0 ? (
+            heroImages.map((img, idx) => (
+              <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+                <img src={img.image_url} alt={img.title || "Hero"} className="w-full h-full object-cover object-top" />
+              </div>
+            ))
+          ) : (
+            <img src={FALLBACK_HERO} alt="Life with a pack" className="w-full h-full object-cover object-top" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-th-dark/75 via-th-dark/45 to-th-dark/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-th-dark/50 via-transparent to-transparent" />
         </div>
@@ -87,6 +95,13 @@ export default function ThePack() {
                 Explore Stories
               </button>
             </div>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

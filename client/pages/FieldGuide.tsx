@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Article, Product } from "@shared/api";
+import { useHeroImages } from "@/hooks/useHeroImages";
 
 const categoryBg: Record<string, string> = {
   PHYSIOLOGY: "bg-th-brown",
@@ -19,7 +20,10 @@ const DEFAULT_FEATURES = [
   "Step-by-step triage for emergent situations.",
 ];
 
+const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
+
 export default function FieldGuide() {
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-guide");
   const [articles, setArticles] = useState<Article[]>([]);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
 
@@ -42,11 +46,15 @@ export default function FieldGuide() {
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-end overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560"
-            alt="Adventure with pets outdoors"
-            className="w-full h-full object-cover object-center"
-          />
+          {heroImages.length > 0 ? (
+            heroImages.map((img, idx) => (
+              <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+                <img src={img.image_url} alt={img.title || "Hero"} className="w-full h-full object-cover object-center" />
+              </div>
+            ))
+          ) : (
+            <img src={FALLBACK_HERO} alt="Adventure with pets outdoors" className="w-full h-full object-cover object-center" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-th-dark/80 via-th-dark/50 to-th-dark/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-th-dark/60 via-transparent to-transparent" />
         </div>
@@ -69,6 +77,13 @@ export default function FieldGuide() {
                 <path d="M12 5v14M5 12l7 7 7-7" />
               </svg>
             </a>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

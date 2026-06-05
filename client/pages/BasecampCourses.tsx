@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Course } from "@shared/api";
+import { useHeroImages } from "@/hooks/useHeroImages";
 
 const filters = [
   { id: "all", label: "All Programs" },
@@ -27,7 +28,10 @@ interface CourseDisplay extends Course {
   category: string;
 }
 
+const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
+
 export default function BasecampCourses() {
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("basecamp-courses");
   const [activeFilter, setActiveFilter] = useState("all");
   const [courses, setCourses] = useState<CourseDisplay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,11 +77,15 @@ export default function BasecampCourses() {
       {/* Hero Section */}
       <section className="relative min-h-[65vh] flex items-end overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560"
-            alt="Hiking with dog in the mountains"
-            className="w-full h-full object-cover object-center"
-          />
+          {heroImages.length > 0 ? (
+            heroImages.map((img, idx) => (
+              <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+                <img src={img.image_url} alt={img.title || "Hero"} className="w-full h-full object-cover object-center" />
+              </div>
+            ))
+          ) : (
+            <img src={FALLBACK_HERO} alt="Hiking with dog in the mountains" className="w-full h-full object-cover object-center" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-th-dark/80 via-th-dark/55 to-th-dark/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-th-dark/50 via-transparent to-transparent" />
         </div>
@@ -110,6 +118,13 @@ export default function BasecampCourses() {
                 WATCH TRAILER
               </button>
             </div>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
