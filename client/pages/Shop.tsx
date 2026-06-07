@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Product } from "@shared/api";
+import { useHeroImages } from "@/hooks/useHeroImages";
 
 const categories = [
   { id: "all", label: "All Products" },
@@ -36,10 +37,12 @@ interface ProductDisplay {
 }
 
 export default function Shop() {
+  const { images: heroImages, index: heroIndex } = useHeroImages("shop");
   const [activeCategory, setActiveCategory] = useState("all");
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const heroBg = heroImages[heroIndex] ?? null;
 
   // Fetch products from API
   useEffect(() => {
@@ -87,6 +90,13 @@ export default function Shop() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-th-dark-teal py-20">
+        {/* Background image dari DB (jika ada) dengan overlay agar teks terbaca */}
+        {heroBg && (
+          <div className="absolute inset-0">
+            <img src={heroBg.image_url} alt={heroBg.title || "Shop"} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/50" />
+          </div>
+        )}
         {/* Decorative blurs */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-peach opacity-5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-mint opacity-10 blur-3xl pointer-events-none" />
