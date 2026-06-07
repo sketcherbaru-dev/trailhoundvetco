@@ -1,9 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { db } from "./_db";
 
-// Allow larger body size for base64 image uploads in admin routes
-export const config = { api: { bodyParser: { sizeLimit: "8mb" } } };
-
 const cors = (res: VercelResponse) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");

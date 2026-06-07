@@ -1,8 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { db } from "../_db";
 
-export const config = { api: { bodyParser: { sizeLimit: "8mb" } } };
-
 const ALLOWED_TABLES = ["articles", "products", "courses", "podcasts", "hero_images", "subscribers", "field_reports", "pack_testimonials", "pack_gallery"];
 
 const setCors = (res: VercelResponse) => {
