@@ -25,7 +25,7 @@ const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066
 export default function FieldGuide() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-guide");
   const [articles, setArticles] = useState<Article[]>([]);
-  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
+  const [featuredProduct, setFeaturedProduct] = useState<Product | null | undefined>(undefined);
 
   useEffect(() => {
     fetch("/api/articles")
@@ -36,7 +36,7 @@ export default function FieldGuide() {
     fetch("/api/products/field-guide-featured")
       .then((r) => r.json())
       .then((res) => setFeaturedProduct(res.data || null))
-      .catch(() => {});
+      .catch(() => setFeaturedProduct(null));
   }, []);
 
   return (
@@ -146,9 +146,9 @@ export default function FieldGuide() {
                 </ul>
 
                 {/* Price + CTA */}
-                {featuredProduct && (
+                {featuredProduct && featuredProduct.price != null && (
                   <p className="font-heading text-2xl font-bold text-th-dark">
-                    ${featuredProduct.price.toFixed(2)}
+                    ${(featuredProduct.price as number).toFixed(2)}
                   </p>
                 )}
                 {featuredProduct?.external_link ? (
