@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
@@ -23,6 +23,7 @@ const DEFAULT_FEATURES = [
 const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
 
 export default function FieldGuide() {
+  const navigate = useNavigate();
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-guide");
   const [articles, setArticles] = useState<Article[]>([]);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null | undefined>(undefined);
@@ -160,11 +161,14 @@ export default function FieldGuide() {
                   >
                     Buy Now
                   </a>
-                ) : (
-                  <button className="w-full py-4 bg-th-orange text-white font-body font-bold text-lg rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.15)] mt-2">
-                    Pre-Order
+                ) : featuredProduct ? (
+                  <button
+                    onClick={() => navigate(`/shop/${featuredProduct.id}`)}
+                    className="w-full py-4 bg-th-orange text-white font-body font-bold text-lg rounded-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.15)] mt-2"
+                  >
+                    Shop Now
                   </button>
-                )}
+                ) : null}
               </div>
             </div>
           </div>

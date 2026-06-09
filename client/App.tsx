@@ -12,6 +12,7 @@ import BasecampCourses from "./pages/BasecampCourses";
 import FieldNotes from "./pages/FieldNotes";
 import ThePack from "./pages/ThePack";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/field-notes" element={<FieldNotes />} />
           <Route path="/the-pack" element={<ThePack />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />

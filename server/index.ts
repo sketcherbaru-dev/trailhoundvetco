@@ -39,9 +39,10 @@ export function createServer() {
   app.get("/api/articles/home-featured", getHomeFeaturedArticles);
   app.get("/api/articles/:id", getArticleById);
 
-  // Products routes
+  // Products routes — specific paths must come before /:id
   app.get("/api/products", getProducts);
   app.get("/api/products/featured", getFeaturedProducts);
+  app.get("/api/products/field-guide-featured", getFieldGuideFeaturedProduct);
   app.get("/api/products/:id", getProductById);
 
   // Courses routes
@@ -75,9 +76,6 @@ export function createServer() {
 
   // Hero images
   app.get("/api/hero-images", getHeroImages);
-
-  // Field Guide featured product
-  app.get("/api/products/field-guide-featured", getFieldGuideFeaturedProduct);
 
   // The Pack data
   app.get("/api/pack-field-reports", getPackFieldReports);
