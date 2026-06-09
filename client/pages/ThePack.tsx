@@ -6,30 +6,6 @@ import NewsletterSection from "@/components/NewsletterSection";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 
-const STATIC_REPORTS: FieldReport[] = [
-  { id: "1", badge: "SUMMIT DOG", badge_color: "bg-th-teal", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/ad8f3a13ae04700fff0d5e5575df04c10274c8fc?width=600", quote: "Finding a community that understands the risks of high-altitude hiking changed everything for us.", attribution: "MARCUS & LUNA", display_order: 0, active: true, created_at: "", updated_at: "" },
-  { id: "2", badge: "ALPINE CATS", badge_color: "bg-th-orange", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=600", quote: "Trailhound gave us the confidence to take Oliver on his first multi-day paddle board trip.", attribution: "SARAH & OLIVER", display_order: 1, active: true, created_at: "", updated_at: "" },
-  { id: "3", badge: "BACKCOUNTRY PUPS", badge_color: "bg-th-dark-teal", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/d77d51663f18e7d00750c7efd4cfbbd05694fa51?width=600", quote: "The emergency tele-health support while we were in the Sierras was literally a lifesaver.", attribution: "THE JENKINS FAMILY", display_order: 2, active: true, created_at: "", updated_at: "" },
-];
-
-const STATIC_TESTIMONIALS: PackTestimonial[] = [
-  { id: "1", quote: "Finally a vet service that doesn't just tolerate my dog's lifestyle—they advocate for it.", name: "DR. ELENA C.", role: "DVM, Private Vet", date: "Aug 2023", avatar_initial: "E", display_order: 0, active: true, created_at: "", updated_at: "" },
-  { id: "2", quote: "The packing lists for winter camping saved us from a very cold night in the Tetons.", name: "JAMIE L.", role: "Hiker & Dog Mom", date: "Nov 2023", avatar_initial: "J", display_order: 1, active: true, created_at: "", updated_at: "" },
-  { id: "3", quote: "Having access to adventure-specific first aid training made me a better pet parent.", name: "TOM R.", role: "Hiker", date: "Feb 2023", avatar_initial: "T", display_order: 2, active: true, created_at: "", updated_at: "" },
-  { id: "4", quote: "The pack meetups are the highlight of our month. The community is so supportive.", name: "ANNA G.", role: "Wild Kids", date: "March 2023", avatar_initial: "A", display_order: 3, active: true, created_at: "", updated_at: "" },
-];
-
-const STATIC_GALLERY: PackGalleryImage[] = [
-  { id: "1", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/bb28d6b4166b51557c80243e645c464b4f94a88e?width=600", alt_text: "Adventure with dog near water", display_order: 0, active: true, created_at: "", updated_at: "" },
-  { id: "2", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/e8c4f1d9ecb8b25906a4b4cffceef6f307c475a9?width=600", alt_text: "Outdoor hiking with pets", display_order: 1, active: true, created_at: "", updated_at: "" },
-  { id: "3", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/ad8f3a13ae04700fff0d5e5575df04c10274c8fc?width=600", alt_text: "Person with dog on trail", display_order: 2, active: true, created_at: "", updated_at: "" },
-  { id: "4", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/cbbcf45d0ff6f0df97e204e9e1c5330818dd8b4a?width=600", alt_text: "Cat in outdoor adventure", display_order: 3, active: true, created_at: "", updated_at: "" },
-  { id: "5", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/38398c6854188508193d665e6b1695a39ac29f21?width=600", alt_text: "Hiking with dog through forest", display_order: 4, active: true, created_at: "", updated_at: "" },
-  { id: "6", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/83f81d20f77c0a6af91203230ba0026aa266323d?width=600", alt_text: "Mountain trail adventure", display_order: 5, active: true, created_at: "", updated_at: "" },
-  { id: "7", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/d77d51663f18e7d00750c7efd4cfbbd05694fa51?width=600", alt_text: "Person with dog in snow", display_order: 6, active: true, created_at: "", updated_at: "" },
-  { id: "8", image_url: "https://api.builder.io/api/v1/image/assets/TEMP/fea16b77b798c81635011b745a38928cc949a733?width=600", alt_text: "Cat in nature", display_order: 7, active: true, created_at: "", updated_at: "" },
-];
-
 const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
 
 export default function ThePack() {
@@ -41,18 +17,18 @@ export default function ThePack() {
   useEffect(() => {
     fetch("/api/pack-field-reports")
       .then((r) => r.json())
-      .then((res) => { if (res.data?.length) setFieldReports(res.data); else setFieldReports(STATIC_REPORTS); })
-      .catch(() => setFieldReports(STATIC_REPORTS));
+      .then((res) => setFieldReports(res.data || []))
+      .catch(() => setFieldReports([]));
 
     fetch("/api/pack-testimonials")
       .then((r) => r.json())
-      .then((res) => { if (res.data?.length) setTestimonials(res.data); else setTestimonials(STATIC_TESTIMONIALS); })
-      .catch(() => setTestimonials(STATIC_TESTIMONIALS));
+      .then((res) => setTestimonials(res.data || []))
+      .catch(() => setTestimonials([]));
 
     fetch("/api/pack-gallery")
       .then((r) => r.json())
-      .then((res) => { if (res.data?.length) setGallery(res.data); else setGallery(STATIC_GALLERY); })
-      .catch(() => setGallery(STATIC_GALLERY));
+      .then((res) => setGallery(res.data || []))
+      .catch(() => setGallery([]));
   }, []);
 
   const gallerySlots = [...gallery, ...Array(Math.max(0, 8 - gallery.length)).fill(null)].slice(0, 8);
@@ -129,46 +105,56 @@ export default function ThePack() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {fieldReports.map((report) => (
-              <div key={report.id} className="flex flex-col gap-4">
-                <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-th-warm-dim">
-                  <img
-                    src={report.image_url}
-                    alt={report.attribution}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span
-                      className={`${report.badge_color} text-white font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm`}
-                    >
-                      {report.badge}
-                    </span>
+          {fieldReports.length === 0 ? (
+            <div className="text-center py-16 text-th-teal/50 font-body text-sm">
+              Belum ada field report. Tambahkan melalui{" "}
+              <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">
+                admin panel
+              </Link>
+              .
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {fieldReports.map((report) => (
+                <div key={report.id} className="flex flex-col gap-4">
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-th-warm-dim">
+                    <img
+                      src={report.image_url}
+                      alt={report.attribution}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span
+                        className={`${report.badge_color} text-white font-body text-xs font-bold tracking-[0.08em] uppercase px-3 py-1 rounded-sm`}
+                      >
+                        {report.badge}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col gap-3">
-                  <p className="font-body text-sm text-th-dark/80 italic leading-relaxed">
-                    "{report.quote}"
-                  </p>
-                  <div>
-                    <p className="font-body text-xs font-bold text-th-orange tracking-widest uppercase">
-                      → {report.attribution}
+                  <div className="flex flex-col gap-3">
+                    <p className="font-body text-sm text-th-dark/80 italic leading-relaxed">
+                      "{report.quote}"
                     </p>
+                    <div>
+                      <p className="font-body text-xs font-bold text-th-orange tracking-widest uppercase">
+                        → {report.attribution}
+                      </p>
+                    </div>
+                    <Link
+                      to="#"
+                      className="font-body text-xs font-bold text-th-dark hover:text-th-orange transition-colors flex items-center gap-1"
+                    >
+                      READ THEIR STORY
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </Link>
                   </div>
-                  <Link
-                    to="#"
-                    className="font-body text-xs font-bold text-th-dark hover:text-th-orange transition-colors flex items-center gap-1"
-                  >
-                    READ THEIR STORY
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -184,33 +170,43 @@ export default function ThePack() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-0 relative z-10">
-            {testimonials.map((t) => (
-              <div
-                key={t.id}
-                className="bg-white/80 backdrop-blur-sm rounded-xl p-5 flex flex-col gap-4 shadow-sm"
-              >
-                <p className="font-body text-sm text-th-dark/80 italic leading-relaxed flex-1">
-                  "{t.quote}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-th-warm-mid flex items-center justify-center flex-shrink-0">
-                    <span className="font-heading text-sm font-bold text-th-teal">
-                      {t.avatar_initial}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-body text-xs font-bold text-th-dark tracking-wide">
-                      {t.name}
-                    </p>
-                    <p className="font-body text-xs text-th-teal/80">
-                      {[t.role, t.date].filter(Boolean).join(" | ")}
-                    </p>
+          {testimonials.length === 0 ? (
+            <div className="text-center py-12 text-th-teal/50 font-body text-sm relative z-10">
+              Belum ada testimoni. Tambahkan melalui{" "}
+              <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">
+                admin panel
+              </Link>
+              .
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-0 relative z-10">
+              {testimonials.map((t) => (
+                <div
+                  key={t.id}
+                  className="bg-white/80 backdrop-blur-sm rounded-xl p-5 flex flex-col gap-4 shadow-sm"
+                >
+                  <p className="font-body text-sm text-th-dark/80 italic leading-relaxed flex-1">
+                    "{t.quote}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-th-warm-mid flex items-center justify-center flex-shrink-0">
+                      <span className="font-heading text-sm font-bold text-th-teal">
+                        {t.avatar_initial}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs font-bold text-th-dark tracking-wide">
+                        {t.name}
+                      </p>
+                      <p className="font-body text-xs text-th-teal/80">
+                        {[t.role, t.date].filter(Boolean).join(" | ")}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Mountain Illustration */}
@@ -266,7 +262,13 @@ export default function ThePack() {
           </div>
 
           {gallery.length === 0 ? (
-            <div className="text-center py-12 text-th-teal/60 font-body">No gallery photos yet.</div>
+            <div className="text-center py-12 text-th-teal/50 font-body text-sm">
+              Belum ada foto galeri. Tambahkan melalui{" "}
+              <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">
+                admin panel
+              </Link>
+              .
+            </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="flex flex-col gap-3">

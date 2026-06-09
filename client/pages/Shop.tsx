@@ -59,12 +59,12 @@ export default function Shop() {
             id: p.id,
             name: p.name,
             description: p.description,
-            price: `$${p.price}`,
+            price: p.price != null ? `$${(p.price as number).toFixed(2)}` : "—",
             badge: (p.badge as BadgeType) || "NEW",
             category: p.category,
             image: p.image,
-            external: p.external_link ? true : false,
-            href: p.external_link || "#",
+            external: !!(p.external_link),
+            href: p.external_link || `/shop/${p.id}`,
           }));
           setProducts(mapped);
         }
