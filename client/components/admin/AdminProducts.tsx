@@ -23,6 +23,7 @@ const AdminProducts = () => {
     badge: "",
     external_link: "",
     stripe_product_id: "",
+    features: "",
     featured: false,
     field_guide_featured: false,
   });
@@ -115,12 +116,13 @@ const AdminProducts = () => {
     setFormData({
       name: product.name,
       description: product.description,
-      price: product.price,
+      price: product.price ?? 0,
       image: product.image,
       category: product.category,
       badge: product.badge || "",
       external_link: product.external_link || "",
       stripe_product_id: product.stripe_product_id || "",
+      features: product.features || "",
       featured: product.featured,
       field_guide_featured: product.field_guide_featured || false,
     });
@@ -138,6 +140,7 @@ const AdminProducts = () => {
       badge: "",
       external_link: "",
       stripe_product_id: "",
+      features: "",
       featured: false,
       field_guide_featured: false,
     });
@@ -251,6 +254,19 @@ const AdminProducts = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Feature Bullets (satu per baris — tampil di Field Guide)
+                </label>
+                <Textarea
+                  value={formData.features}
+                  onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                  rows={4}
+                  placeholder={"Covers 50+ trail emergencies step-by-step\nBuilt for the moments you don't plan for\nBites, cuts, heat stroke, altitude & more"}
+                />
+                <p className="text-xs text-gray-400 mt-1">Setiap baris = satu poin bullet di halaman Field Guide</p>
+              </div>
+
               <div className="flex flex-col gap-2">
                 <div className="flex items-center">
                   <input
@@ -315,7 +331,7 @@ const AdminProducts = () => {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>{product.price != null ? `$${(product.price as number).toFixed(2)}` : "—"}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.featured ? "✓" : "—"}</TableCell>
                   <TableCell>{product.field_guide_featured ? "✓" : "—"}</TableCell>

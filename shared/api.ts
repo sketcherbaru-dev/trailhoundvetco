@@ -34,12 +34,13 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  price: number | null;
   image: string;
   category: string;
   badge?: string;
   external_link?: string;
   stripe_product_id?: string;
+  features?: string;
   featured: boolean;
   field_guide_featured: boolean;
   created_at: string;

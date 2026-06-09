@@ -10,6 +10,7 @@ import { createProduct, updateProduct, deleteProduct } from "./routes/admin-prod
 import { createCourse, updateCourse, deleteCourse } from "./routes/admin-courses";
 import { createPodcast, updatePodcast, deletePodcast } from "./routes/admin-podcasts";
 import { subscribe } from "./routes/subscribe";
+import { genericCreate, genericUpdate, genericDelete } from "./routes/admin-generic";
 import { getHeroImages } from "./routes/hero-images";
 import { getFieldGuideFeaturedProduct } from "./routes/products-field-guide-featured";
 import { getPackFieldReports } from "./routes/pack-field-reports";
@@ -76,6 +77,11 @@ export function createServer() {
 
   // Hero images
   app.get("/api/hero-images", getHeroImages);
+
+  // Generic admin routes — must come AFTER specific admin routes
+  app.post("/api/admin/:table", genericCreate);
+  app.put("/api/admin/:table/:id", genericUpdate);
+  app.delete("/api/admin/:table/:id", genericDelete);
 
   // The Pack data
   app.get("/api/pack-field-reports", getPackFieldReports);

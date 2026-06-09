@@ -15,9 +15,9 @@ const categoryBg: Record<string, string> = {
 };
 
 const DEFAULT_FEATURES = [
-  "Build for the moments you don't plan for.",
-  "Everything you need to handle emergencies on the trail with confidence.",
-  "Step-by-step triage for emergent situations.",
+  "Covers 50+ trail emergencies with step-by-step triage",
+  "Built for the moments you don't plan for",
+  "Bites, cuts, heat stroke, altitude sickness & more",
 ];
 
 const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
@@ -124,9 +124,12 @@ export default function FieldGuide() {
                   </p>
                 </div>
 
-                {/* Feature Bullets */}
+                {/* Feature Bullets — dari DB jika tersedia, fallback ke DEFAULT */}
                 <ul className="flex flex-col gap-3">
-                  {DEFAULT_FEATURES.map((feature, i) => (
+                  {(featuredProduct?.features
+                    ? featuredProduct.features.split("\n").filter(Boolean)
+                    : DEFAULT_FEATURES
+                  ).map((feature, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-5 h-5 rounded-full bg-th-orange/10 flex items-center justify-center mt-0.5">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
