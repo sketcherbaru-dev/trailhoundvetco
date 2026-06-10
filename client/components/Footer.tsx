@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 const footerLinks = [
   { href: "/field-guide", label: "Field Guide" },
@@ -9,9 +10,20 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const bgImage = useSectionBackground("footer-bg");
+
   return (
-    <footer className="bg-th-dark-teal">
-      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12">
+    <footer className="bg-th-dark-teal relative overflow-hidden">
+      {bgImage && (
+        <>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgImage})` }}
+          />
+          <div className="absolute inset-0 bg-th-dark-teal/90" />
+        </>
+      )}
+      <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12 py-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           {/* Logo + Tagline */}
           <div className="flex flex-col gap-3">

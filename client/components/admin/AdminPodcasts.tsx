@@ -246,7 +246,7 @@ const AdminPodcasts = () => {
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

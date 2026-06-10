@@ -15,6 +15,9 @@ const PAGE_OPTIONS = [
   { value: "the-pack", label: "The Pack" },
   { value: "shop", label: "Shop" },
   { value: "contact", label: "Contact" },
+  { value: "the-pack-bg", label: "BG: Testimonials" },
+  { value: "newsletter-bg", label: "BG: Newsletter" },
+  { value: "footer-bg", label: "BG: Footer" },
 ];
 
 const AdminHero = () => {
@@ -161,7 +164,10 @@ const AdminHero = () => {
         <div>
           <h2 className="text-2xl font-bold">Hero Images — {pageLabel}</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Up to 6 images for <strong>{pageLabel}</strong> hero. If only 1 image is set, no carousel will be shown.
+            {activePage.endsWith("-bg")
+              ? <>Background image for <strong>{pageLabel.replace("BG: ", "")}</strong> section. Only the first active image is used.</>
+              : <>Up to 6 images for <strong>{pageLabel}</strong> hero. If only 1 image is set, no carousel will be shown.</>
+            }
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) resetForm(); }}>
@@ -174,7 +180,7 @@ const AdminHero = () => {
               + Add Image {images.length >= 6 ? "(6/6 max)" : `(${images.length}/6)`}
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingId ? "Edit Hero Image" : `Add Hero Image — ${pageLabel}`}</DialogTitle>
             </DialogHeader>
@@ -304,7 +310,7 @@ const AdminHero = () => {
           <p className="text-sm mt-1">Add up to 6 images. With only 1 image, no carousel is shown.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

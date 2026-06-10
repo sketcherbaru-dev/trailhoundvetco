@@ -342,7 +342,7 @@ const AdminArticles = () => {
           <p className="text-sm mt-1">Click "+ New Article" to create your first article.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
