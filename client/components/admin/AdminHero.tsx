@@ -29,6 +29,10 @@ const AdminHero = () => {
     image_url: "",
     title: "",
     subtitle: "",
+    cta_text: "",
+    cta_url: "",
+    text_align: "left",
+    overlay_opacity: 60,
     display_order: 0,
     active: true,
     page: "home",
@@ -108,7 +112,7 @@ const AdminHero = () => {
   };
 
   const resetForm = () => {
-    setFormData({ image_url: "", title: "", subtitle: "", display_order: images.length, active: true, page: activePage });
+    setFormData({ image_url: "", title: "", subtitle: "", cta_text: "", cta_url: "", text_align: "left", overlay_opacity: 60, display_order: images.length, active: true, page: activePage });
     setEditingId(null);
   };
 
@@ -117,6 +121,10 @@ const AdminHero = () => {
       image_url: img.image_url,
       title: img.title || "",
       subtitle: img.subtitle || "",
+      cta_text: img.cta_text || "",
+      cta_url: img.cta_url || "",
+      text_align: img.text_align || "left",
+      overlay_opacity: img.overlay_opacity ?? 60,
       display_order: img.display_order,
       active: img.active,
       page: img.page,
@@ -203,6 +211,54 @@ const AdminHero = () => {
                   onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                   placeholder="Short description under the headline"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">CTA Button Text (optional)</label>
+                  <Input
+                    value={formData.cta_text}
+                    onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
+                    placeholder="e.g. Browse Field Guides"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">CTA Button URL (optional)</label>
+                  <Input
+                    value={formData.cta_url}
+                    onChange={(e) => setFormData({ ...formData, cta_url: e.target.value })}
+                    placeholder="e.g. /shop or #section"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Text Alignment</label>
+                  <select
+                    value={formData.text_align}
+                    onChange={(e) => setFormData({ ...formData, text_align: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md text-sm"
+                  >
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Overlay Opacity: {formData.overlay_opacity}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="90"
+                    step="5"
+                    value={formData.overlay_opacity}
+                    onChange={(e) => setFormData({ ...formData, overlay_opacity: parseInt(e.target.value) })}
+                    className="w-full mt-2"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

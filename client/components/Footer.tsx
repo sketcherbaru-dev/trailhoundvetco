@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Social */}
           <div className="flex items-center gap-4">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/TrailhoundVetCo"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -54,7 +54,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://tiktok.com"
+              href="https://www.tiktok.com/@trailhoundvetco"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"

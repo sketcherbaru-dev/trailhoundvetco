@@ -26,6 +26,7 @@ const AdminProducts = () => {
     features: "",
     featured: false,
     field_guide_featured: false,
+    shop_hero_featured: false,
   });
   const [uploading, setUploading] = useState(false);
 
@@ -125,6 +126,7 @@ const AdminProducts = () => {
       features: product.features || "",
       featured: product.featured,
       field_guide_featured: product.field_guide_featured || false,
+      shop_hero_featured: product.shop_hero_featured || false,
     });
     setEditingId(product.id);
     setIsOpen(true);
@@ -143,6 +145,7 @@ const AdminProducts = () => {
       features: "",
       featured: false,
       field_guide_featured: false,
+      shop_hero_featured: false,
     });
     setEditingId(null);
   };
@@ -290,6 +293,18 @@ const AdminProducts = () => {
                   />
                   <label htmlFor="field_guide_featured" className="text-sm font-medium">
                     Field Guide Best Seller (shows in Field Guide page)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="shop_hero_featured"
+                    checked={formData.shop_hero_featured}
+                    onChange={(e) => setFormData({ ...formData, shop_hero_featured: e.target.checked })}
+                    className="mr-2"
+                  />
+                  <label htmlFor="shop_hero_featured" className="text-sm font-medium">
+                    Shop Hero Featured (shows in Shop page hero section)
                   </label>
                 </div>
               </div>

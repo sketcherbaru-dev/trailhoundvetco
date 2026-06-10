@@ -107,7 +107,7 @@ export default function NewsletterSection() {
               </p>
               <div className="flex flex-col gap-3">
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/profile.php?id=61579138242328"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 rounded-lg bg-white/15 hover:bg-white/25 transition-colors flex items-center justify-center"
@@ -117,7 +117,7 @@ export default function NewsletterSection() {
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/TrailhoundVetCo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 rounded-lg bg-white/15 hover:bg-white/25 transition-colors flex items-center justify-center"
@@ -127,7 +127,7 @@ export default function NewsletterSection() {
                   </svg>
                 </a>
                 <a
-                  href="https://tiktok.com"
+                  href="https://www.tiktok.com/@trailhoundvetco"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 rounded-lg bg-white/15 hover:bg-white/25 transition-colors flex items-center justify-center"

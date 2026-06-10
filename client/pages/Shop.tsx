@@ -42,9 +42,9 @@ export default function Shop() {
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [heroProduct, setHeroProduct] = useState<Product | null | undefined>(undefined);
   const heroBg = heroImages[heroIndex] ?? null;
 
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -54,7 +54,6 @@ export default function Shop() {
           setError(result.error);
           setProducts([]);
         } else {
-          // Map database products to display format
           const mapped = (result.data || []).map((p: Product): ProductDisplay => ({
             id: p.id,
             name: p.name,
@@ -76,7 +75,18 @@ export default function Shop() {
       }
     };
 
+    const fetchHeroProduct = async () => {
+      try {
+        const res = await fetch("/api/products/shop-hero-featured");
+        const result = await res.json();
+        setHeroProduct(result.data || null);
+      } catch {
+        setHeroProduct(null);
+      }
+    };
+
     fetchProducts();
+    fetchHeroProduct();
   }, []);
 
   const filtered =
@@ -84,20 +94,20 @@ export default function Shop() {
       ? products
       : products.filter((p) => p.category === activeCategory);
 
+  const STATIC_HERO_IMG = "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800";
+
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-th-dark-teal py-20">
-        {/* Background image dari DB (jika ada) dengan overlay agar teks terbaca */}
         {heroBg && (
           <div className="absolute inset-0">
             <img src={heroBg.image_url} alt={heroBg.title || "Shop"} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/50" />
           </div>
         )}
-        {/* Decorative blurs */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-peach opacity-5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-mint opacity-10 blur-3xl pointer-events-none" />
 
@@ -132,20 +142,53 @@ export default function Shop() {
               </div>
             </div>
 
-            {/* Featured Image */}
+            {/* Featured Product Image */}
             <div className="lg:w-[400px] xl:w-[480px] flex-shrink-0">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-th-mint/10 rounded-2xl blur-xl" />
-                <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800"
-                  alt="Trailhound Field Guide"
-                  className="relative w-full rounded-2xl shadow-2xl object-cover"
-                />
-                {/* Badge */}
-                <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide">
-                  PRE-ORDER NOW
+              {heroProduct !== undefined && (
+                <div className="relative">
+                  <div className="absolute -inset-4 bg-th-mint/10 rounded-2xl blur-xl" />
+                  {heroProduct ? (
+                    heroProduct.external_link ? (
+                      <a href={heroProduct.external_link} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={heroProduct.image}
+                          alt={heroProduct.name}
+                          className="relative w-full rounded-2xl shadow-2xl object-cover"
+                        />
+                        {heroProduct.badge && (
+                          <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide uppercase">
+                            {heroProduct.badge}
+                          </div>
+                        )}
+                      </a>
+                    ) : (
+                      <Link to={`/shop/${heroProduct.id}`}>
+                        <img
+                          src={heroProduct.image}
+                          alt={heroProduct.name}
+                          className="relative w-full rounded-2xl shadow-2xl object-cover"
+                        />
+                        {heroProduct.badge && (
+                          <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide uppercase">
+                            {heroProduct.badge}
+                          </div>
+                        )}
+                      </Link>
+                    )
+                  ) : (
+                    <>
+                      <img
+                        src={STATIC_HERO_IMG}
+                        alt="Trailhound Field Guide"
+                        className="relative w-full rounded-2xl shadow-2xl object-cover"
+                      />
+                      <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide">
+                        PRE-ORDER NOW
+                      </div>
+                    </>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -180,83 +223,35 @@ export default function Shop() {
       {/* Product Grid */}
       <section className="py-16 flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((product) => (
-              <div
-                key={product.id}
-                className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
-              >
-                {/* Image */}
-                <div className="relative h-52 bg-th-warm-dim overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3">
-                    <span
-                      className={`font-body text-xs font-bold tracking-[0.06em] uppercase px-2.5 py-1 rounded-sm ${
-                        badgeStyles[product.badge]
-                      }`}
-                    >
-                      {product.badge}
-                    </span>
-                  </div>
-                  {/* External indicator */}
-                  {product.external && (
-                    <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#45645E" strokeWidth="2.5">
-                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-col flex-1 p-5 gap-3">
-                  <div className="flex-1">
-                    <h3 className="font-heading text-base font-bold text-th-dark leading-snug mb-1.5 group-hover:text-th-orange transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="font-body text-xs text-th-dark/60 leading-relaxed">
-                      {product.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-th-warm-mid">
-                    <span className="font-heading text-lg font-bold text-th-dark">
-                      {product.price}
-                    </span>
-                    {product.external ? (
-                      <a
-                        href={product.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-                      >
-                        Shop Now
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </a>
-                    ) : (
-                      <Link
-                        to={product.href}
-                        className="px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-                      >
-                        {product.badge === "PRE-ORDER"
-                          ? "Pre-Order"
-                          : product.badge === "COMING SOON"
-                          ? "Learn More"
-                          : "Shop Now"}
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-16 text-th-teal/50 font-body">Loading products...</div>
+          ) : error ? (
+            <div className="text-center py-16 text-red-500 font-body">{error}</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filtered.map((product) =>
+                product.external ? (
+                  <a
+                    key={product.id}
+                    href={product.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
+                  >
+                    <ProductCardContent product={product} />
+                  </a>
+                ) : (
+                  <Link
+                    key={product.id}
+                    to={product.href}
+                    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
+                  >
+                    <ProductCardContent product={product} />
+                  </Link>
+                )
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -270,9 +265,7 @@ export default function Shop() {
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
               </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">
-                Vet-Approved Gear
-              </h3>
+              <h3 className="font-heading text-base font-bold text-th-dark">Vet-Approved Gear</h3>
               <p className="font-body text-sm text-th-dark/60">
                 Every product is reviewed and approved by our veterinary team.
               </p>
@@ -284,9 +277,7 @@ export default function Shop() {
                   <path d="M12 6v6l4 2" />
                 </svg>
               </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">
-                Free Shipping Over $75
-              </h3>
+              <h3 className="font-heading text-base font-bold text-th-dark">Free Shipping Over $75</h3>
               <p className="font-body text-sm text-th-dark/60">
                 On all domestic orders — gear up without the added cost.
               </p>
@@ -297,9 +288,7 @@ export default function Shop() {
                   <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                 </svg>
               </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">
-                Purpose-Driven Brand
-              </h3>
+              <h3 className="font-heading text-base font-bold text-th-dark">Purpose-Driven Brand</h3>
               <p className="font-body text-sm text-th-dark/60">
                 10% of proceeds fund wilderness pet rescue operations.
               </p>
@@ -311,5 +300,66 @@ export default function Shop() {
       <NewsletterSection />
       <Footer />
     </div>
+  );
+}
+
+function ProductCardContent({ product }: { product: ProductDisplay }) {
+  return (
+    <>
+      {/* Image */}
+      <div className="relative h-52 bg-th-warm-dim overflow-hidden">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute top-3 left-3">
+          <span
+            className={`font-body text-xs font-bold tracking-[0.06em] uppercase px-2.5 py-1 rounded-sm ${
+              badgeStyles[product.badge] || "bg-th-dark text-th-cream"
+            }`}
+          >
+            {product.badge}
+          </span>
+        </div>
+        {product.external && (
+          <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#45645E" strokeWidth="2.5">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
+            </svg>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-5 gap-3">
+        <div className="flex-1">
+          <h3 className="font-heading text-base font-bold text-th-dark leading-snug mb-1.5 group-hover:text-th-orange transition-colors">
+            {product.name}
+          </h3>
+          <p className="font-body text-xs text-th-dark/60 leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 pt-2 border-t border-th-warm-mid">
+          <span className="font-heading text-lg font-bold text-th-dark">
+            {product.price}
+          </span>
+          <span className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg group-hover:bg-orange-600 transition-colors whitespace-nowrap">
+            {product.external ? (
+              <>
+                Shop Now
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
+                </svg>
+              </>
+            ) : product.badge === "PRE-ORDER" ? "Pre-Order"
+              : product.badge === "COMING SOON" ? "Learn More"
+              : "Shop Now"}
+          </span>
+        </div>
+      </div>
+    </>
   );
 }
