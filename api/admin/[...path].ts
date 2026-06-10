@@ -20,11 +20,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   // pathSegments: e.g. ["articles"] or ["articles", "some-uuid"]
-  const pathSegments = Array.isArray(req.query.path)
+  const pathFromQuery = Array.isArray(req.query.path)
     ? req.query.path
     : req.query.path
     ? [req.query.path as string]
     : [];
+
+  // Fallback: parse langsung dari URL bila Vercel tidak mengisi req.query.path
+  const pathFromUrl = (() => {
+    const raw = (req.url || "").split("?")[0];
+    const parts = raw.split("/").filter(Boolean); // ["api", "admin", "products", ...]
+    const adminIdx = parts.indexOf("admin");
+    if (adminIdx >= 0) return parts.slice(adminIdx + 1);
+    return parts;
+  })();
+
+  const pathSegments = pathFromQuery.length > 0 ? pathFromQuery : pathFromUrl;
 
   const [resource, id] = pathSegments;
 

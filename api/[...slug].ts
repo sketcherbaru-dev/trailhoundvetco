@@ -17,11 +17,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  const slugParts = Array.isArray(req.query.slug)
+  const slugFromQuery = Array.isArray(req.query.slug)
     ? req.query.slug
     : req.query.slug
     ? [req.query.slug as string]
     : [];
+
+  // Fallback: parse langsung dari URL bila Vercel tidak mengisi req.query.slug
+  // (catch-all [...slug] kadang tidak ter-populate tergantung konfigurasi build).
+  const slugFromUrl = (() => {
+    const raw = (req.url || "").split("?")[0]; // buang query string
+    const parts = raw.split("/").filter(Boolean); // ["api", "hero-images", ...]
+    if (parts[0] === "api") return parts.slice(1);
+    return parts;
+  })();
+
+  const slugParts = slugFromQuery.length > 0 ? slugFromQuery : slugFromUrl;
 
   const [resource, sub] = slugParts;
 
