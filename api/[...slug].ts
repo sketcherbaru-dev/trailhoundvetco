@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { db } from "./_db";
+import { db } from "./_db.js";
 
 const cors = (res: VercelResponse) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

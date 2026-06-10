@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { db } from "../_db";
+import { db } from "../_db.js";
 
 const ALLOWED_TABLES = ["articles", "products", "courses", "podcasts", "hero_images", "subscribers", "field_reports", "pack_testimonials", "pack_gallery"];
 
