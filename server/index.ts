@@ -13,6 +13,7 @@ import { subscribe } from "./routes/subscribe";
 import { genericCreate, genericUpdate, genericDelete } from "./routes/admin-generic";
 import { getHeroImages } from "./routes/hero-images";
 import { getFieldGuideFeaturedProduct } from "./routes/products-field-guide-featured";
+import { getShopHeroFeaturedProduct } from "./routes/products-shop-hero-featured";
 import { getPackFieldReports } from "./routes/pack-field-reports";
 import { getPackTestimonials } from "./routes/pack-testimonials";
 import { getPackGallery } from "./routes/pack-gallery";
@@ -44,6 +45,7 @@ export function createServer() {
   app.get("/api/products", getProducts);
   app.get("/api/products/featured", getFeaturedProducts);
   app.get("/api/products/field-guide-featured", getFieldGuideFeaturedProduct);
+  app.get("/api/products/shop-hero-featured", getShopHeroFeaturedProduct);
   app.get("/api/products/:id", getProductById);
 
   // Courses routes

@@ -134,6 +134,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json({ data: data || null });
     }
 
+    // GET /api/products/shop-hero-featured
+    if (resource === "products" && sub === "shop-hero-featured") {
+      const { data, error } = await db
+        .from("products")
+        .select("*")
+        .eq("shop_hero_featured", true)
+        .limit(1)
+        .maybeSingle();
+      if (error) return res.status(400).json({ data: null, error: error.message });
+      return res.json({ data: data || null });
+    }
+
     // GET /api/products/:id
     if (resource === "products" && sub) {
       const { data, error } = await db.from("products").select("*").eq("id", sub).single();

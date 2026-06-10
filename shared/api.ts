@@ -43,6 +43,7 @@ export interface Product {
   features?: string;
   featured: boolean;
   field_guide_featured: boolean;
+  shop_hero_featured: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -70,6 +71,10 @@ export interface HeroImage {
   image_url: string;
   title?: string;
   subtitle?: string;
+  cta_text?: string;
+  cta_url?: string;
+  text_align?: string;
+  overlay_opacity?: number;
   display_order: number;
   active: boolean;
   created_at: string;
