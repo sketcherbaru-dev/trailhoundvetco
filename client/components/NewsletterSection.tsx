@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 export default function NewsletterSection() {
+  const bgImage = useSectionBackground("newsletter-bg");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -29,14 +31,24 @@ export default function NewsletterSection() {
 
   return (
     <section className="py-20 bg-th-dark-teal relative overflow-hidden">
-      {/* Subtle texture overlay */}
-      <div
-        className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 80% 50%, #C7EAE1 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, #FF9C6F 0%, transparent 50%)",
-        }}
-      />
+      {/* Dynamic or fallback background */}
+      {bgImage ? (
+        <>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgImage})` }}
+          />
+          <div className="absolute inset-0 bg-th-dark-teal/85" />
+        </>
+      ) : (
+        <div
+          className="absolute inset-0 opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse at 80% 50%, #C7EAE1 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, #FF9C6F 0%, transparent 50%)",
+          }}
+        />
+      )}
 
       <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">

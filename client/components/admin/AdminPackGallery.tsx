@@ -114,7 +114,7 @@ const AdminPackGallery = () => {
           <DialogTrigger asChild>
             <Button onClick={() => resetForm()}>+ Add Photo</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingId ? "Edit Gallery Photo" : "Add Gallery Photo"}</DialogTitle>
             </DialogHeader>
@@ -158,7 +158,7 @@ const AdminPackGallery = () => {
           <p className="font-medium">No gallery images yet.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

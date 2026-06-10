@@ -6,11 +6,13 @@ import NewsletterSection from "@/components/NewsletterSection";
 import Lightbox from "@/components/Lightbox";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
+import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
 
 export default function ThePack() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("the-pack");
+  const testimonialsBg = useSectionBackground("the-pack-bg");
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [testimonials, setTestimonials] = useState<PackTestimonial[]>([]);
   const [gallery, setGallery] = useState<PackGalleryImage[]>([]);
@@ -148,8 +150,20 @@ export default function ThePack() {
       </section>
 
       {/* From the Pack / Testimonials */}
-      <section className="relative overflow-hidden bg-amber-50 pt-16 pb-0">
-        <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
+      <section
+        className="relative overflow-hidden pt-16 pb-0"
+        style={testimonialsBg ? {} : { backgroundColor: "#fffbeb" }}
+      >
+        {testimonialsBg && (
+          <>
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${testimonialsBg})` }}
+            />
+            <div className="absolute inset-0 bg-amber-50/80" />
+          </>
+        )}
+        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-orange">From the Pack</h2>
             <p className="font-body text-th-teal text-sm mt-1">Community Wisdom</p>

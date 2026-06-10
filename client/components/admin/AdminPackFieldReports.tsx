@@ -185,7 +185,7 @@ const AdminPackFieldReports = () => {
           <p className="font-medium">No field reports yet.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-white rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
