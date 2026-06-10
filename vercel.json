@@ -3,9 +3,8 @@
   "outputDirectory": "dist/spa",
   "installCommand": "pnpm install",
   "rewrites": [
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/admin/:path*", "destination": "/api/admin/[...path]" },
+    { "source": "/api/:slug*", "destination": "/api/[...slug]" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

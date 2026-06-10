@@ -17,11 +17,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  const slugParts = Array.isArray(req.query.slug)
-    ? req.query.slug
-    : req.query.slug
-    ? [req.query.slug as string]
-    : [];
+  // Ekstrak segmen path secara robust. Vercel bisa mengirim slug sebagai:
+  //  - array: ["products", "featured"]
+  //  - string gabungan: "products/featured" (dari rewrite :slug*)
+  //  - kosong: parse langsung dari req.url
+  const rawSlug = req.query.slug;
+  let slugParts: string[] = [];
+  if (Array.isArray(rawSlug)) {
+    slugParts = rawSlug.flatMap((s) => s.split("/")).filter(Boolean);
+  } else if (typeof rawSlug === "string") {
+    slugParts = rawSlug.split("/").filter(Boolean);
+  }
+  if (slugParts.length === 0) {
+    const raw = (req.url || "").split("?")[0];
+    const parts = raw.split("/").filter(Boolean); // ["api", "products", "featured"]
+    slugParts = parts[0] === "api" ? parts.slice(1) : parts;
+  }
 
   const [resource, sub] = slugParts;
 

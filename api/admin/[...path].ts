@@ -19,12 +19,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  // pathSegments: e.g. ["articles"] or ["articles", "some-uuid"]
-  const pathSegments = Array.isArray(req.query.path)
-    ? req.query.path
-    : req.query.path
-    ? [req.query.path as string]
-    : [];
+  // Ekstrak segmen path secara robust (lihat catatan di api/[...slug].ts).
+  const rawPath = req.query.path;
+  let pathSegments: string[] = [];
+  if (Array.isArray(rawPath)) {
+    pathSegments = rawPath.flatMap((s) => s.split("/")).filter(Boolean);
+  } else if (typeof rawPath === "string") {
+    pathSegments = rawPath.split("/").filter(Boolean);
+  }
+  if (pathSegments.length === 0) {
+    const raw = (req.url || "").split("?")[0];
+    const parts = raw.split("/").filter(Boolean); // ["api", "admin", "products", ...]
+    const adminIdx = parts.indexOf("admin");
+    pathSegments = adminIdx >= 0 ? parts.slice(adminIdx + 1) : parts;
+  }
 
   const [resource, id] = pathSegments;
 
