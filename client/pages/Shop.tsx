@@ -338,7 +338,7 @@ function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-3 pt-2 border-t border-th-warm-mid">
+        <div className={`flex items-center gap-3 pt-2 border-t border-th-warm-mid ${product.badge === "COMING SOON" ? "justify-end" : "justify-between"}`}>
           {product.badge !== "COMING SOON" && (
             <span className="font-heading text-lg font-bold text-th-dark">
               {product.price}
