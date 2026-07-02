@@ -127,12 +127,12 @@ export default function Shop() {
               THE TRAILHOUND STORE
             </p>
             <h1 className="font-heading text-5xl md:text-6xl font-black text-th-cream leading-tight mb-5">
-              Gear Up for the Trail.
+              Gear for adventurous pets and their humans.
             </h1>
             <p className="font-body text-th-cream/70 text-lg leading-relaxed max-w-lg mb-8">
-              Field guides, first aid kits, trail gear, and courses — every
-              product curated to keep you and your adventure companion safe
-              out there.
+              Equipment designed for high-altitude excursions, 
+              deep woods discovery, and the bond between 
+              Trailhound and their human.
             </p>
             <div className="flex flex-wrap gap-3">
               <button
