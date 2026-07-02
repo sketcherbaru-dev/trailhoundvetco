@@ -8,6 +8,8 @@ import { Product } from "@shared/api";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/imageUpload";
 
+const BADGE_OPTIONS = ["PRE-ORDER", "COMING SOON", "BEST SELLER", "NEW", "EXTERNAL"];
+
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +20,7 @@ const AdminProducts = () => {
     name: "",
     description: "",
     price: 0,
+    hide_price: false,
     image: "",
     category: "books",
     badge: "",
@@ -72,10 +75,12 @@ const AdminProducts = () => {
       const url = editingId ? `/api/admin/products/${editingId}` : "/api/admin/products";
       const method = editingId ? "PUT" : "POST";
 
+      const { hide_price, ...rest } = formData;
+      const payload = { ...rest, price: hide_price ? null : formData.price };
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -118,6 +123,7 @@ const AdminProducts = () => {
       name: product.name,
       description: product.description,
       price: product.price ?? 0,
+      hide_price: product.price == null,
       image: product.image,
       category: product.category,
       badge: product.badge || "",
@@ -137,6 +143,7 @@ const AdminProducts = () => {
       name: "",
       description: "",
       price: 0,
+      hide_price: false,
       image: "",
       category: "books",
       badge: "",
@@ -190,8 +197,17 @@ const AdminProducts = () => {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                    required
+                    disabled={formData.hide_price}
+                    className={formData.hide_price ? "opacity-40" : ""}
                   />
+                  <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.hide_price}
+                      onChange={(e) => setFormData({ ...formData, hide_price: e.target.checked })}
+                    />
+                    <span className="text-xs text-gray-500">Sembunyikan harga</span>
+                  </label>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Category</label>
@@ -230,12 +246,30 @@ const AdminProducts = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Badge (e.g., PRE-ORDER)</label>
-                  <Input
-                    value={formData.badge}
-                    onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    placeholder="Optional"
-                  />
+                  <label className="block text-sm font-medium mb-1">Badge</label>
+                  <select
+                    value={BADGE_OPTIONS.includes(formData.badge) ? formData.badge : "__custom__"}
+                    onChange={(e) => {
+                      if (e.target.value !== "__custom__") {
+                        setFormData({ ...formData, badge: e.target.value });
+                      }
+                    }}
+                    className="w-full px-3 py-2 border rounded-md"
+                  >
+                    <option value="__custom__">— Custom / Tidak ada —</option>
+                    {BADGE_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                  {/* Tampil saat badge bukan preset — ketik manual atau kosongkan */}
+                  {!BADGE_OPTIONS.includes(formData.badge) && (
+                    <Input
+                      className="mt-2"
+                      value={formData.badge}
+                      onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                      placeholder="Ketik badge custom, atau kosongkan"
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">External Link</label>
