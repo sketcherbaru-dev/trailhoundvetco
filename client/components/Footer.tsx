@@ -46,6 +46,7 @@ export default function Footer() {
               {[
                 { href: "/field-guide", label: "The Field Guide" },
                 { href: "/basecamp-courses", label: "Basecamp Courses" },
+                { href: "/the-pack", label: "The Pack" },
                 { href: "/field-notes", label: "Field Notes" },
                 { href: "/shop", label: "Shop" },
               ].map((link) => (

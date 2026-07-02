@@ -206,7 +206,7 @@ const AdminProducts = () => {
                       checked={formData.hide_price}
                       onChange={(e) => setFormData({ ...formData, hide_price: e.target.checked })}
                     />
-                    <span className="text-xs text-gray-500">Sembunyikan harga</span>
+                    <span className="text-xs text-gray-500">Hide price</span>
                   </label>
                 </div>
                 <div>
@@ -256,7 +256,7 @@ const AdminProducts = () => {
                     }}
                     className="w-full px-3 py-2 border rounded-md"
                   >
-                    <option value="__custom__">— Custom / Tidak ada —</option>
+                    <option value="__custom__">— None / Custom —</option>
                     {BADGE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
@@ -267,7 +267,7 @@ const AdminProducts = () => {
                       className="mt-2"
                       value={formData.badge}
                       onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                      placeholder="Ketik badge custom, atau kosongkan"
+                      placeholder="Type custom badge, or leave empty"
                     />
                   )}
                 </div>
@@ -301,7 +301,7 @@ const AdminProducts = () => {
                   rows={4}
                   placeholder={"Covers 50+ trail emergencies step-by-step\nBuilt for the moments you don't plan for\nBites, cuts, heat stroke, altitude & more"}
                 />
-                <p className="text-xs text-gray-400 mt-1">Setiap baris = satu poin bullet di halaman Field Guide</p>
+                <p className="text-xs text-gray-400 mt-1">Each line = one bullet point on the Field Guide page</p>
               </div>
 
               <div className="flex flex-col gap-2">

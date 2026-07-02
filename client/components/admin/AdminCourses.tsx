@@ -190,6 +190,7 @@ const AdminCourses = () => {
                     <option>Beginner</option>
                     <option>Intermediate</option>
                     <option>Advanced</option>
+                    <option>Professional</option>
                   </select>
                 </div>
                 <div>
