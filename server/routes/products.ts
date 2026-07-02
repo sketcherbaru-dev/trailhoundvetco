@@ -12,7 +12,7 @@ export const getProducts: RequestHandler = async (req, res) => {
       query = query.eq('category', category);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('sort_order', { ascending: true, nullsFirst: false });
 
     if (error) {
       res.status(400).json({ data: [], error: error.message } as ProductsResponse);
@@ -58,7 +58,7 @@ export const getFeaturedProducts: RequestHandler = async (req, res) => {
       .from('products')
       .select('*')
       .eq('featured', true)
-      .order('created_at', { ascending: false })
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .limit(6);
 
     if (error) {

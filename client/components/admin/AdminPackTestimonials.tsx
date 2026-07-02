@@ -77,6 +77,19 @@ const AdminPackTestimonials = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'pack_testimonials', id, direction }),
+      });
+      await fetchTestimonials();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (t: PackTestimonial) => {
     setFormData({
       quote: t.quote,
@@ -169,6 +182,7 @@ const AdminPackTestimonials = () => {
                 <TableHead>Quote</TableHead>
                 <TableHead>Order</TableHead>
                 <TableHead>Active</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -180,6 +194,12 @@ const AdminPackTestimonials = () => {
                   <TableCell className="text-sm max-w-xs truncate italic">"{t.quote}"</TableCell>
                   <TableCell>{t.display_order}</TableCell>
                   <TableCell>{t.active ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(t.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(t.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(t)}>Edit</Button>

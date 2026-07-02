@@ -109,6 +109,19 @@ const AdminArticles = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'articles', id, direction }),
+      });
+      await fetchArticles();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (article: Article) => {
     setFormData({
       title: article.title,
@@ -352,6 +365,7 @@ const AdminArticles = () => {
                 <TableHead>Date</TableHead>
                 <TableHead>Featured</TableHead>
                 <TableHead>Home</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -364,6 +378,12 @@ const AdminArticles = () => {
                   <TableCell>{article.date}</TableCell>
                   <TableCell>{article.featured ? "✓" : "—"}</TableCell>
                   <TableCell>{article.home_featured ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(article.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(article.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(article)}>

@@ -99,6 +99,19 @@ const AdminHero = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'hero_images', id, direction }),
+      });
+      await fetchImages();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -318,6 +331,7 @@ const AdminHero = () => {
                 <TableHead>Title / Subtitle</TableHead>
                 <TableHead>Order</TableHead>
                 <TableHead>Active</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -333,6 +347,12 @@ const AdminHero = () => {
                   </TableCell>
                   <TableCell>{img.display_order}</TableCell>
                   <TableCell>{img.active ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(img.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(img.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(img)}>Edit</Button>

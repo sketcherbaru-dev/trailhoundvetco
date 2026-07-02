@@ -7,7 +7,7 @@ export const getPodcasts: RequestHandler = async (req, res) => {
     const { data, error } = await supabaseAnonClient
       .from('podcasts')
       .select('*')
-      .order('episode_number', { ascending: false });
+      .order('sort_order', { ascending: true, nullsFirst: false });
 
     if (error) {
       res.status(400).json({ data: [], error: error.message } as PodcastsResponse);

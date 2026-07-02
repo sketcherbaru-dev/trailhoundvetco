@@ -7,7 +7,7 @@ export const getPackTestimonials: RequestHandler = async (_req, res) => {
       .from('pack_testimonials')
       .select('*')
       .eq('active', true)
-      .order('display_order', { ascending: true });
+      .order('sort_order', { ascending: true, nullsFirst: false });
 
     if (error) { res.status(400).json({ data: [], error: error.message }); return; }
     res.json({ data: data || [] });

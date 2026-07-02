@@ -13,7 +13,7 @@ export const getArticles: RequestHandler = async (req, res) => {
     const { data, error } = await supabaseAnonClient
       .from('articles')
       .select('*')
-      .order('date', { ascending: false });
+      .order('sort_order', { ascending: true, nullsFirst: false });
 
     if (error) {
       res.status(400).json({ data: [], error: error.message } as ArticlesResponse);
@@ -59,7 +59,7 @@ export const getFeaturedArticles: RequestHandler = async (req, res) => {
       .from('articles')
       .select('*')
       .eq('featured', true)
-      .order('date', { ascending: false })
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .limit(5);
 
     if (error) {
@@ -82,7 +82,7 @@ export const getHomeFeaturedArticles: RequestHandler = async (_req, res) => {
       .from('articles')
       .select('*')
       .eq('home_featured', true)
-      .order('date', { ascending: false })
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .limit(3);
 
     if (error) {

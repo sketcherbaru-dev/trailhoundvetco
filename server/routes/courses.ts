@@ -18,7 +18,7 @@ export const getCourses: RequestHandler = async (req, res) => {
       query = query.eq('format', format);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('sort_order', { ascending: true, nullsFirst: false });
 
     if (error) {
       res.status(400).json({ data: [], error: error.message } as CoursesResponse);
@@ -64,7 +64,7 @@ export const getFeaturedCourses: RequestHandler = async (req, res) => {
       .from('courses')
       .select('*')
       .eq('featured', true)
-      .order('created_at', { ascending: false })
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .limit(6);
 
     if (error) {

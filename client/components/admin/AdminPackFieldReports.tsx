@@ -97,6 +97,19 @@ const AdminPackFieldReports = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'pack_field_reports', id, direction }),
+      });
+      await fetchReports();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (report: FieldReport) => {
     setFormData({
       badge: report.badge,
@@ -194,6 +207,7 @@ const AdminPackFieldReports = () => {
                 <TableHead>Attribution</TableHead>
                 <TableHead>Order</TableHead>
                 <TableHead>Active</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -205,6 +219,12 @@ const AdminPackFieldReports = () => {
                   <TableCell className="text-sm">{r.attribution}</TableCell>
                   <TableCell>{r.display_order}</TableCell>
                   <TableCell>{r.active ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(r.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(r.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(r)}>Edit</Button>
