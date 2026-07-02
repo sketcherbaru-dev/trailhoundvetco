@@ -6,9 +6,11 @@ import NewsletterSection from "@/components/NewsletterSection";
 import Lightbox from "@/components/Lightbox";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
+import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 export default function ThePack() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("the-pack");
+  const testimonialsBg = useSectionBackground("the-pack-bg");
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [testimonials, setTestimonials] = useState<PackTestimonial[]>([]);
   const [gallery, setGallery] = useState<PackGalleryImage[]>([]);
@@ -144,38 +146,36 @@ export default function ThePack() {
       </section>
 
       {/* From the Pack / Testimonials */}
-      <section
-        className="relative overflow-hidden pt-16 pb-0 bg-th-dark-teal"
-      >
-        {/* Static background — replace public/pack-testimonial-bg.png to update */}
+      <section className="relative overflow-hidden pt-16 pb-0 bg-th-cream">
+        {/* Background: DB-driven if set, else static file — replace public/pack-testimonial-bg.png to update */}
         <div
           className="absolute inset-0 bg-cover bg-bottom"
-          style={{ backgroundImage: "url(/pack-testimonial-bg.png)" }}
+          style={{ backgroundImage: `url(${testimonialsBg || "/pack-testimonial-bg.png"})` }}
         />
-        <div className="absolute inset-0 bg-th-dark-teal/70" />
+        <div className="absolute inset-0 bg-th-cream/75" />
         <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-orange">From the Pack</h2>
-            <p className="font-body text-th-cream/60 text-sm mt-1">Community Wisdom</p>
+            <p className="font-body text-th-dark/50 text-sm mt-1">Community Wisdom</p>
           </div>
 
           {testimonials.length === 0 ? (
-            <div className="text-center py-12 text-th-cream/50 font-body text-sm relative z-10">
+            <div className="text-center py-12 text-th-dark/40 font-body text-sm relative z-10">
               Belum ada testimoni. Tambahkan melalui{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">admin panel</Link>.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-0 relative z-10">
               {testimonials.map((t) => (
-                <div key={t.id} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-5 flex flex-col gap-4 shadow-sm">
-                  <p className="font-body text-sm text-th-cream/85 italic leading-relaxed flex-1">"{t.quote}"</p>
+                <div key={t.id} className="bg-white/80 backdrop-blur-sm border border-th-warm-mid/60 rounded-xl p-5 flex flex-col gap-4 shadow-sm">
+                  <p className="font-body text-sm text-th-dark/80 italic leading-relaxed flex-1">"{t.quote}"</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-th-orange/80 flex items-center justify-center flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-th-orange flex items-center justify-center flex-shrink-0">
                       <span className="font-heading text-sm font-bold text-white">{t.avatar_initial}</span>
                     </div>
                     <div>
-                      <p className="font-body text-xs font-bold text-th-cream tracking-wide">{t.name}</p>
-                      <p className="font-body text-xs text-th-cream/55">{[t.role, t.date].filter(Boolean).join(" | ")}</p>
+                      <p className="font-body text-xs font-bold text-th-dark tracking-wide">{t.name}</p>
+                      <p className="font-body text-xs text-th-dark/50">{[t.role, t.date].filter(Boolean).join(" | ")}</p>
                     </div>
                   </div>
                 </div>
