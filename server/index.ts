@@ -18,6 +18,7 @@ import { getPackFieldReports } from "./routes/pack-field-reports";
 import { getPackTestimonials } from "./routes/pack-testimonials";
 import { getPackGallery } from "./routes/pack-gallery";
 import { createCheckoutSession } from "./routes/checkout";
+import { reorderItem } from "./routes/admin-reorder";
 
 export function createServer() {
   const app = express();
@@ -90,6 +91,9 @@ export function createServer() {
   app.get("/api/pack-field-reports", getPackFieldReports);
   app.get("/api/pack-testimonials", getPackTestimonials);
   app.get("/api/pack-gallery", getPackGallery);
+
+  // Reorder (sort_order)
+  app.post("/api/admin/reorder", reorderItem);
 
   // Stripe checkout
   app.post("/api/checkout/create-session", createCheckoutSession);
