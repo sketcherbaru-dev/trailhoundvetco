@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import Lightbox from "@/components/Lightbox";
+import TopographicPattern from "@/components/TopographicPattern";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 import { useSectionBackground } from "@/hooks/useSectionBackground";
@@ -151,41 +152,42 @@ export default function ThePack() {
 
       {/* From the Pack / Testimonials */}
       <section
-        className="relative overflow-hidden pt-16 pb-0"
-        style={testimonialsBg ? {} : { backgroundColor: "#fffbeb" }}
+        className="relative overflow-hidden pt-16 pb-0 bg-th-dark-teal"
       >
+        {/* Topographic pattern */}
+        <TopographicPattern />
         {testimonialsBg && (
           <>
             <div
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${testimonialsBg})` }}
             />
-            <div className="absolute inset-0 bg-amber-50/80" />
+            <div className="absolute inset-0 bg-th-dark-teal/85" />
           </>
         )}
         <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-orange">From the Pack</h2>
-            <p className="font-body text-th-teal text-sm mt-1">Community Wisdom</p>
+            <p className="font-body text-th-cream/60 text-sm mt-1">Community Wisdom</p>
           </div>
 
           {testimonials.length === 0 ? (
-            <div className="text-center py-12 text-th-teal/50 font-body text-sm relative z-10">
+            <div className="text-center py-12 text-th-cream/50 font-body text-sm relative z-10">
               Belum ada testimoni. Tambahkan melalui{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">admin panel</Link>.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-0 relative z-10">
               {testimonials.map((t) => (
-                <div key={t.id} className="bg-white/80 backdrop-blur-sm rounded-xl p-5 flex flex-col gap-4 shadow-sm">
-                  <p className="font-body text-sm text-th-dark/80 italic leading-relaxed flex-1">"{t.quote}"</p>
+                <div key={t.id} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-5 flex flex-col gap-4 shadow-sm">
+                  <p className="font-body text-sm text-th-cream/85 italic leading-relaxed flex-1">"{t.quote}"</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-th-warm-mid flex items-center justify-center flex-shrink-0">
-                      <span className="font-heading text-sm font-bold text-th-teal">{t.avatar_initial}</span>
+                    <div className="w-9 h-9 rounded-full bg-th-orange/80 flex items-center justify-center flex-shrink-0">
+                      <span className="font-heading text-sm font-bold text-white">{t.avatar_initial}</span>
                     </div>
                     <div>
-                      <p className="font-body text-xs font-bold text-th-dark tracking-wide">{t.name}</p>
-                      <p className="font-body text-xs text-th-teal/80">{[t.role, t.date].filter(Boolean).join(" | ")}</p>
+                      <p className="font-body text-xs font-bold text-th-cream tracking-wide">{t.name}</p>
+                      <p className="font-body text-xs text-th-cream/55">{[t.role, t.date].filter(Boolean).join(" | ")}</p>
                     </div>
                   </div>
                 </div>
@@ -194,38 +196,7 @@ export default function ThePack() {
           )}
         </div>
 
-        {/* Mountain Illustration */}
-        <div className="w-full mt-6" aria-hidden="true">
-          <svg viewBox="0 0 1440 280" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FEF3C7" />
-                <stop offset="100%" stopColor="#FDE68A" />
-              </linearGradient>
-            </defs>
-            <rect width="1440" height="280" fill="url(#skyGrad)" />
-            <polygon points="500,40 720,240 280,240" fill="#B2C8D8" />
-            <polygon points="500,40 560,130 440,130" fill="#E8F4F8" />
-            <polygon points="0,200 200,100 400,200" fill="#9BB8C8" opacity="0.6" />
-            <polygon points="900,180 1100,90 1300,180" fill="#9BB8C8" opacity="0.55" />
-            <rect y="200" width="1440" height="80" fill="#6B9E8A" />
-            {[80,160,240,320,380,440,500,560,620,700,780,860,940,1000,1060,1140,1220,1300,1380].map((x,i) => (
-              <g key={i} transform={`translate(${x}, ${200 - (i % 3) * 12})`}>
-                <polygon points="0,-55 12,0 -12,0" fill={i%3===0?"#3D7A63":"#4E8C74"} />
-                <polygon points="0,-40 10,0 -10,0" fill={i%3===0?"#2F6350":"#3D7A63"} />
-                <rect x="-3" y="0" width="6" height="12" fill="#2F6350" />
-              </g>
-            ))}
-            {[40,120,200,310,410,530,640,750,870,980,1080,1170,1260,1370].map((x,i) => (
-              <g key={i} transform={`translate(${x}, ${220 - (i % 2) * 8})`}>
-                <polygon points="0,-70 14,0 -14,0" fill={i%2===0?"#2F6350":"#3D7A63"} />
-                <polygon points="0,-50 11,0 -11,0" fill={i%2===0?"#255040":"#2F6350"} />
-                <rect x="-4" y="0" width="8" height="15" fill="#255040" />
-              </g>
-            ))}
-            <rect y="250" width="1440" height="30" fill="#4E8C74" />
-          </svg>
-        </div>
+        <div className="pb-16" />
       </section>
 
       {/* Collective Moments — Photo Grid */}

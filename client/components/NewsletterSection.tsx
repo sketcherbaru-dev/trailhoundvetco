@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSectionBackground } from "@/hooks/useSectionBackground";
+import TopographicPattern from "@/components/TopographicPattern";
 
 export default function NewsletterSection() {
   const bgImage = useSectionBackground("newsletter-bg");
@@ -31,29 +32,22 @@ export default function NewsletterSection() {
 
   return (
     <section className="py-20 bg-th-dark-teal relative overflow-hidden">
-      {/* Dynamic or fallback background */}
-      {bgImage ? (
+      {/* Topographic pattern background */}
+      <TopographicPattern />
+
+      {/* Optional custom background image overlay */}
+      {bgImage && (
         <>
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${bgImage})` }}
-          />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${bgImage})` }} />
           <div className="absolute inset-0 bg-th-dark-teal/85" />
         </>
-      ) : (
-        <div
-          className="absolute inset-0 opacity-5 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse at 80% 50%, #C7EAE1 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, #FF9C6F 0%, transparent 50%)",
-          }}
-        />
       )}
 
       <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
-          {/* Left: Newsletter Form */}
-          <div className="flex-1 flex flex-col items-center lg:items-start gap-5 text-center lg:text-left">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+          {/* Main: centered newsletter content */}
+          <div className="flex-1 flex flex-col items-center gap-5 text-center">
             {/* Envelope Icon */}
             <svg width="40" height="40" viewBox="0 0 34 34" fill="none">
               <path
@@ -65,7 +59,7 @@ export default function NewsletterSection() {
             <h2 className="font-heading text-4xl md:text-5xl font-black text-th-cream leading-tight">
               Join the Pack.
             </h2>
-            <p className="font-body text-th-cream/70 text-base leading-relaxed max-w-md">
+            <p className="font-body text-th-cream/70 text-base leading-relaxed max-w-lg">
               Receive exclusive Expedition Reports, Field Notes, and new
               Basecamp Course offerings delivered to your inbox.
             </p>
