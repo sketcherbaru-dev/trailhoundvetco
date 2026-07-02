@@ -5,7 +5,7 @@ import TopographicPattern from "@/components/TopographicPattern";
 export default function NewsletterSection() {
   const bgImage = useSectionBackground("newsletter-bg");
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error" | "already_subscribed" | "unsubscribed">("idle");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,9 +20,31 @@ export default function NewsletterSection() {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
+      if (res.status === 409 && data.already_subscribed) {
+        setStatus("already_subscribed");
+        return;
+      }
       if (!res.ok) throw new Error(data.error || "Failed to subscribe");
       setStatus("success");
       setMessage(data.message || "Successfully subscribed! Welcome to the pack.");
+      setEmail("");
+    } catch (err) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/unsubscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to unsubscribe");
+      setStatus("unsubscribed");
       setEmail("");
     } catch (err) {
       setStatus("error");
@@ -67,6 +89,36 @@ export default function NewsletterSection() {
             {status === "success" ? (
               <div className="w-full max-w-lg px-5 py-4 bg-green-500/20 border border-green-400/30 rounded-lg">
                 <p className="font-body text-green-300 text-sm font-medium">{message}</p>
+              </div>
+            ) : status === "unsubscribed" ? (
+              <div className="w-full max-w-lg px-5 py-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="font-body text-th-cream/70 text-sm font-medium">You've been unsubscribed. You can re-subscribe anytime.</p>
+              </div>
+            ) : status === "already_subscribed" ? (
+              <div className="w-full max-w-lg flex flex-col gap-3">
+                <div className="px-5 py-4 bg-white/10 border border-white/20 rounded-lg">
+                  <p className="font-body text-th-cream text-sm font-medium">
+                    <span className="text-th-peach font-bold">{email}</span> is already subscribed to Trail updates.
+                  </p>
+                  <p className="font-body text-th-cream/60 text-xs mt-1">
+                    You'll receive Expedition Reports, Field Notes, and new Basecamp Course offerings.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setStatus("idle")}
+                    className="flex-1 px-4 py-2.5 border border-white/20 text-th-cream/70 font-body text-sm rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    Keep Subscribed
+                  </button>
+                  <button
+                    onClick={handleUnsubscribe}
+                    disabled={status === "loading" as unknown as boolean}
+                    className="flex-1 px-4 py-2.5 bg-red-500/30 border border-red-400/30 text-red-300 font-body text-sm font-semibold rounded-lg hover:bg-red-500/40 transition-colors disabled:opacity-60"
+                  >
+                    Unsubscribe
+                  </button>
+                </div>
               </div>
             ) : (
               <form

@@ -15,7 +15,7 @@ export const subscribe: RequestHandler = async (req, res) => {
 
     if (error) {
       if (error.code === '23505') {
-        res.json({ message: "You're already subscribed!" });
+        res.status(409).json({ already_subscribed: true, message: "You're already subscribed." });
         return;
       }
       res.status(400).json({ error: error.message });

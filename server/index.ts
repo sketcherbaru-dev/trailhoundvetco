@@ -10,6 +10,7 @@ import { createProduct, updateProduct, deleteProduct } from "./routes/admin-prod
 import { createCourse, updateCourse, deleteCourse } from "./routes/admin-courses";
 import { createPodcast, updatePodcast, deletePodcast } from "./routes/admin-podcasts";
 import { subscribe } from "./routes/subscribe";
+import { unsubscribe } from "./routes/unsubscribe";
 import { genericCreate, genericUpdate, genericDelete } from "./routes/admin-generic";
 import { getHeroImages } from "./routes/hero-images";
 import { getFieldGuideFeaturedProduct } from "./routes/products-field-guide-featured";
@@ -76,8 +77,9 @@ export function createServer() {
   app.put("/api/admin/podcasts/:id", updatePodcast);
   app.delete("/api/admin/podcasts/:id", deletePodcast);
 
-  // Newsletter subscription
+  // Newsletter subscription / unsubscription
   app.post("/api/subscribe", subscribe);
+  app.post("/api/unsubscribe", unsubscribe);
 
   // Hero images
   app.get("/api/hero-images", getHeroImages);
