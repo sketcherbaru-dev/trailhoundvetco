@@ -153,7 +153,7 @@ export default function Index() {
 
             {/* Right: Image + Quote */}
             <div className="relative mt-8 lg:mt-0">
-              <div className="rounded-lg overflow-hidden bg-th-cream">
+              <div className="rounded-lg overflow-hidden">
                 <img
                   src="/why-it-matters-dog.png"
                   alt="Dog in a field"
