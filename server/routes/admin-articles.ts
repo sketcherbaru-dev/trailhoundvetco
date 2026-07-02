@@ -5,6 +5,13 @@ export const createArticle: RequestHandler = async (req, res) => {
   try {
     const { title, excerpt, content, category, author, thumbnail, image, date, read_time, featured, home_featured } = req.body;
 
+    const { data: existing } = await supabaseAnonClient
+      .from('articles').select('id').ilike('title', title).maybeSingle();
+    if (existing) {
+      res.status(409).json({ error: `An article titled "${title}" already exists.` });
+      return;
+    }
+
     const { data, error } = await supabaseAnonClient
       .from('articles')
       .insert([{
