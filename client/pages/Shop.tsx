@@ -37,13 +37,11 @@ interface ProductDisplay {
 }
 
 export default function Shop() {
-  const { images: heroImages, index: heroIndex } = useHeroImages("shop");
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("shop");
   const [activeCategory, setActiveCategory] = useState("all");
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [heroProduct, setHeroProduct] = useState<Product | null | undefined>(undefined);
-  const heroBg = heroImages[heroIndex] ?? null;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -75,18 +73,7 @@ export default function Shop() {
       }
     };
 
-    const fetchHeroProduct = async () => {
-      try {
-        const res = await fetch("/api/products/shop-hero-featured");
-        const result = await res.json();
-        setHeroProduct(result.data || null);
-      } catch {
-        setHeroProduct(null);
-      }
-    };
-
     fetchProducts();
-    fetchHeroProduct();
   }, []);
 
   const filtered =
@@ -99,72 +86,51 @@ export default function Shop() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-th-dark-teal py-20">
-        {heroBg && (
-          <div className="absolute inset-0">
-            <img src={heroBg.image_url} alt={heroBg.title || "Shop"} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/50" />
-          </div>
-        )}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-peach opacity-5 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-mint opacity-10 blur-3xl pointer-events-none" />
+      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
+        <div className="absolute inset-0">
+          {heroImages.map((img, idx) => (
+            <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+              <img src={img.image_url} alt={img.title || "Shop"} className="w-full h-full object-cover" />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-th-dark-teal/70 via-transparent to-transparent" />
+        </div>
 
-        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            {/* Text */}
-            <div className="flex-1">
-              <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-4">
-                THE TRAILHOUND STORE
-              </p>
-              <h1 className="font-heading text-5xl md:text-6xl font-black text-th-cream leading-tight mb-5">
-                Gear Up for the Trail.
-              </h1>
-              <p className="font-body text-th-cream/70 text-lg leading-relaxed max-w-lg mb-8">
-                Field guides, first aid kits, trail gear, and courses — every
-                product curated to keep you and your adventure companion safe
-                out there.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => setActiveCategory("books")}
-                  className="px-6 py-3 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  Shop Field Guides
-                </button>
-                <button
-                  onClick={() => setActiveCategory("kits")}
-                  className="px-6 py-3 border border-th-cream/20 bg-th-cream/10 text-th-cream font-body font-semibold text-sm rounded-lg hover:bg-th-cream/20 transition-colors"
-                >
-                  First Aid Kits
-                </button>
+        <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-16 pt-32">
+          <div className="max-w-xl">
+            <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-4">
+              THE TRAILHOUND STORE
+            </p>
+            <h1 className="font-heading text-5xl md:text-6xl font-black text-th-cream leading-tight mb-5">
+              Gear Up for the Trail.
+            </h1>
+            <p className="font-body text-th-cream/70 text-lg leading-relaxed max-w-lg mb-8">
+              Field guides, first aid kits, trail gear, and courses — every
+              product curated to keep you and your adventure companion safe
+              out there.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setActiveCategory("books")}
+                className="px-6 py-3 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                Shop Field Guides
+              </button>
+              <button
+                onClick={() => setActiveCategory("kits")}
+                className="px-6 py-3 border border-th-cream/20 bg-th-cream/10 text-th-cream font-body font-semibold text-sm rounded-lg hover:bg-th-cream/20 transition-colors"
+              >
+                First Aid Kits
+              </button>
+            </div>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
               </div>
-            </div>
-
-            {/* Featured Product Image */}
-            <div className="lg:w-[400px] xl:w-[480px] flex-shrink-0">
-              {heroProduct && (
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-th-mint/10 rounded-2xl blur-xl" />
-                  {heroProduct.external_link ? (
-                    <a href={heroProduct.external_link} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={heroProduct.image}
-                        alt={heroProduct.name}
-                        className="relative w-full rounded-2xl shadow-2xl object-cover"
-                      />
-                    </a>
-                  ) : (
-                    <Link to={`/shop/${heroProduct.id}`}>
-                      <img
-                        src={heroProduct.image}
-                        alt={heroProduct.name}
-                        className="relative w-full rounded-2xl shadow-2xl object-cover"
-                      />
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </section>

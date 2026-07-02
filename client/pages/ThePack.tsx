@@ -46,7 +46,7 @@ export default function ThePack() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative min-h-[65vh] flex items-end overflow-hidden bg-th-dark-teal">
+      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
         <div className="absolute inset-0">
           {heroImages.length > 0 ? (
             heroImages.map((img, idx) => (

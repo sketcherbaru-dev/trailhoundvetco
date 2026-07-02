@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Article } from "@shared/api";
+import { useHeroImages } from "@/hooks/useHeroImages";
 
 const categories = [
   { id: "all", label: "All Notes" },
@@ -19,6 +20,7 @@ interface ArticleDisplay extends Article {
 }
 
 export default function FieldNotes() {
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-notes");
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParamQuery = searchParams.get("search") || "";
 
@@ -86,23 +88,37 @@ export default function FieldNotes() {
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
 
-      {/* Header Banner */}
-      <section className="relative bg-th-dark-teal py-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-mint blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-peach blur-3xl" />
+      {/* Hero Section */}
+      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
+        <div className="absolute inset-0">
+          {heroImages.map((img, idx) => (
+            <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+              <img src={img.image_url} alt={img.title || "Hero"} className="w-full h-full object-cover object-center" />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-r from-th-dark/80 via-th-dark/50 to-th-dark/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-th-dark/60 via-transparent to-transparent" />
         </div>
-        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
-          <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-3">
-            EDUCATION HUB
-          </p>
-          <h1 className="font-heading text-4xl md:text-6xl font-black text-th-cream leading-tight mb-4">
-            Field Notes
-          </h1>
-          <p className="font-body text-th-cream/70 text-lg md:text-xl max-w-xl leading-relaxed">
-            Searchable veterinary first aid articles, trail tips, and expert
-            guides — written for pet owners who go further.
-          </p>
+        <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-16 pt-32">
+          <div className="max-w-xl">
+            <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-3">
+              EDUCATION HUB
+            </p>
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
+              Field Notes
+            </h1>
+            <p className="font-body text-white/80 text-lg md:text-xl max-w-xl leading-relaxed">
+              Searchable veterinary first aid articles, trail tips, and expert
+              guides — written for pet owners who go further.
+            </p>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
