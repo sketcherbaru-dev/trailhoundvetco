@@ -5,8 +5,6 @@ import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import { Article, Course, HeroImage } from "@shared/api";
 
-const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/83f81d20f77c0a6af91203230ba0026aa266323d?width=1560";
-
 export default function Index() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -50,7 +48,7 @@ export default function Index() {
       <Navbar />
 
       {/* Hero Section — Cinematic Carousel */}
-      <section className="relative min-h-[85vh] lg:min-h-screen flex items-center overflow-hidden">
+      <section className="relative min-h-[85vh] lg:min-h-screen flex items-center overflow-hidden bg-th-dark-teal">
         {/* Slides */}
         {heroImages.length > 0 ? (
           heroImages.map((img, idx) => (
@@ -69,16 +67,7 @@ export default function Index() {
               <div className="absolute inset-0 hero-gradient" />
             </div>
           ))
-        ) : (
-          <div className="absolute inset-0">
-            <img
-              src={FALLBACK_HERO}
-              alt="Adventure dogs in nature"
-              className="w-full h-full object-cover object-center"
-            />
-            <div className="absolute inset-0 hero-gradient" />
-          </div>
-        )}
+        ) : null}
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 py-24">

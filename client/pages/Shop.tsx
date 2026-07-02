@@ -28,22 +28,22 @@ interface ProductDisplay {
   id: string;
   name: string;
   description: string;
-  price: number | string;
+  price: string;
+  rawPrice: number | null;
   badge: BadgeType;
   category: string;
   image: string;
-  external?: boolean;
+  external: boolean;
   href: string;
 }
 
 export default function Shop() {
-  const { images: heroImages, index: heroIndex } = useHeroImages("shop");
+  const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("shop");
   const [activeCategory, setActiveCategory] = useState("all");
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [heroProduct, setHeroProduct] = useState<Product | null | undefined>(undefined);
-  const heroBg = heroImages[heroIndex] ?? null;
+  const [checkingOut, setCheckingOut] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -59,6 +59,7 @@ export default function Shop() {
             name: p.name,
             description: p.description,
             price: p.price != null ? `$${(p.price as number).toFixed(2)}` : "—",
+            rawPrice: p.price as number | null,
             badge: (p.badge as BadgeType) || "NEW",
             category: p.category,
             image: p.image,
@@ -75,106 +76,85 @@ export default function Shop() {
       }
     };
 
-    const fetchHeroProduct = async () => {
-      try {
-        const res = await fetch("/api/products/shop-hero-featured");
-        const result = await res.json();
-        setHeroProduct(result.data || null);
-      } catch {
-        setHeroProduct(null);
-      }
-    };
-
     fetchProducts();
-    fetchHeroProduct();
   }, []);
+
+  const handleBuyNow = async (productId: string) => {
+    setCheckingOut(productId);
+    try {
+      const res = await fetch("/api/checkout/create-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Checkout failed. Please try again.");
+        setCheckingOut(null);
+      }
+    } catch {
+      alert("Checkout failed. Please try again.");
+      setCheckingOut(null);
+    }
+  };
 
   const filtered =
     activeCategory === "all"
       ? products
       : products.filter((p) => p.category === activeCategory);
 
-  const STATIC_HERO_IMG = "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800";
-
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-th-dark-teal py-20">
-        {heroBg && (
-          <div className="absolute inset-0">
-            <img src={heroBg.image_url} alt={heroBg.title || "Shop"} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/50" />
-          </div>
-        )}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-th-peach opacity-5 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-th-mint opacity-10 blur-3xl pointer-events-none" />
+      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
+        <div className="absolute inset-0">
+          {heroImages.map((img, idx) => (
+            <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
+              <img src={img.image_url} alt={img.title || "Shop"} className="w-full h-full object-cover" />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-r from-th-dark-teal/95 via-th-dark-teal/80 to-th-dark-teal/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-th-dark-teal/70 via-transparent to-transparent" />
+        </div>
 
-        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            {/* Text */}
-            <div className="flex-1">
-              <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-4">
-                THE TRAILHOUND STORE
-              </p>
-              <h1 className="font-heading text-5xl md:text-6xl font-black text-th-cream leading-tight mb-5">
-                Gear Up for the Trail.
-              </h1>
-              <p className="font-body text-th-cream/70 text-lg leading-relaxed max-w-lg mb-8">
-                Field guides, first aid kits, trail gear, and courses — every
-                product curated to keep you and your adventure companion safe
-                out there.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => setActiveCategory("books")}
-                  className="px-6 py-3 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  Shop Field Guides
-                </button>
-                <button
-                  onClick={() => setActiveCategory("kits")}
-                  className="px-6 py-3 border border-th-cream/20 bg-th-cream/10 text-th-cream font-body font-semibold text-sm rounded-lg hover:bg-th-cream/20 transition-colors"
-                >
-                  First Aid Kits
-                </button>
+        <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-16 pt-32">
+          <div className="max-w-xl">
+            <p className="font-body text-th-peach text-sm font-semibold tracking-[0.1em] uppercase mb-4">
+              THE TRAILHOUND STORE
+            </p>
+            <h1 className="font-heading text-5xl md:text-6xl font-black text-th-cream leading-tight mb-5">
+              Gear Up for the Trail.
+            </h1>
+            <p className="font-body text-th-cream/70 text-lg leading-relaxed max-w-lg mb-8">
+              Field guides, first aid kits, trail gear, and courses — every
+              product curated to keep you and your adventure companion safe
+              out there.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setActiveCategory("books")}
+                className="px-6 py-3 bg-th-orange text-white font-body font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                Shop Field Guides
+              </button>
+              <button
+                onClick={() => setActiveCategory("kits")}
+                className="px-6 py-3 border border-th-cream/20 bg-th-cream/10 text-th-cream font-body font-semibold text-sm rounded-lg hover:bg-th-cream/20 transition-colors"
+              >
+                First Aid Kits
+              </button>
+            </div>
+            {heroImages.length > 1 && (
+              <div className="flex items-center gap-2 mt-8">
+                {heroImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setHeroIndex(idx)} className={`rounded-full transition-all duration-300 ${idx === heroIndex ? "w-8 h-2 bg-th-peach" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`} aria-label={`Slide ${idx + 1}`} />
+                ))}
               </div>
-            </div>
-
-            {/* Featured Product Image */}
-            <div className="lg:w-[400px] xl:w-[480px] flex-shrink-0">
-              {heroProduct !== undefined && (
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-th-mint/10 rounded-2xl blur-xl" />
-                  {heroProduct ? (
-                    heroProduct.external_link ? (
-                      <a href={heroProduct.external_link} target="_blank" rel="noopener noreferrer">
-                        <img
-                          src={heroProduct.image}
-                          alt={heroProduct.name}
-                          className="relative w-full rounded-2xl shadow-2xl object-cover"
-                        />
-                      </a>
-                    ) : (
-                      <Link to={`/shop/${heroProduct.id}`}>
-                        <img
-                          src={heroProduct.image}
-                          alt={heroProduct.name}
-                          className="relative w-full rounded-2xl shadow-2xl object-cover"
-                        />
-                      </Link>
-                    )
-                  ) : (
-                    <img
-                      src={STATIC_HERO_IMG}
-                      alt="Trailhound Field Guide"
-                      className="relative w-full rounded-2xl shadow-2xl object-cover"
-                    />
-                  )}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -214,18 +194,39 @@ export default function Shop() {
             <div className="text-center py-16 text-red-500 font-body">{error}</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((product) =>
-                product.external ? (
-                  <a
-                    key={product.id}
-                    href={product.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
-                  >
-                    <ProductCardContent product={product} />
-                  </a>
-                ) : (
+              {filtered.map((product) => {
+                const canCheckout = !product.external && (product.rawPrice ?? 0) > 0 && product.badge !== "COMING SOON";
+
+                if (product.external) {
+                  return (
+                    <a
+                      key={product.id}
+                      href={product.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
+                    >
+                      <ProductCardContent product={product} />
+                    </a>
+                  );
+                }
+
+                if (canCheckout) {
+                  return (
+                    <div
+                      key={product.id}
+                      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-th-warm-mid hover:shadow-xl transition-shadow duration-300"
+                    >
+                      <ProductCardContent
+                        product={product}
+                        onBuyNow={() => handleBuyNow(product.id)}
+                        buying={checkingOut === product.id}
+                      />
+                    </div>
+                  );
+                }
+
+                return (
                   <Link
                     key={product.id}
                     to={product.href}
@@ -233,8 +234,8 @@ export default function Shop() {
                   >
                     <ProductCardContent product={product} />
                   </Link>
-                )
-              )}
+                );
+              })}
             </div>
           )}
         </div>
@@ -246,7 +247,6 @@ export default function Shop() {
           backgroundImage: "radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.3) 0%, transparent 60%)"
         }} />
         <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col items-center gap-5">
-          {/* Compass/target icon */}
           <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="22" cy="22" r="20" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/>
             <circle cx="22" cy="22" r="13" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/>
@@ -272,16 +272,35 @@ export default function Shop() {
   );
 }
 
-function ProductCardContent({ product }: { product: ProductDisplay }) {
+interface CardProps {
+  product: ProductDisplay;
+  onBuyNow?: () => void;
+  buying?: boolean;
+}
+
+function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
+  const isExternal = product.external;
+  const canBuy = !!onBuyNow;
+
   return (
     <>
       {/* Image */}
       <div className="relative h-52 bg-th-warm-dim overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {canBuy ? (
+          <Link to={`/shop/${product.id}`} onClick={(e) => e.stopPropagation()} tabIndex={-1}>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </Link>
+        ) : (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
         <div className="absolute top-3 left-3">
           <span
             className={`font-body text-xs font-bold tracking-[0.06em] uppercase px-2.5 py-1 rounded-sm ${
@@ -291,7 +310,7 @@ function ProductCardContent({ product }: { product: ProductDisplay }) {
             {product.badge}
           </span>
         </div>
-        {product.external && (
+        {isExternal && (
           <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#45645E" strokeWidth="2.5">
               <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
@@ -303,9 +322,17 @@ function ProductCardContent({ product }: { product: ProductDisplay }) {
       {/* Content */}
       <div className="flex flex-col flex-1 p-5 gap-3">
         <div className="flex-1">
-          <h3 className="font-heading text-base font-bold text-th-dark leading-snug mb-1.5 group-hover:text-th-orange transition-colors">
-            {product.name}
-          </h3>
+          {canBuy ? (
+            <Link to={`/shop/${product.id}`} onClick={(e) => e.stopPropagation()} className="hover:text-th-orange transition-colors">
+              <h3 className="font-heading text-base font-bold text-th-dark leading-snug mb-1.5">
+                {product.name}
+              </h3>
+            </Link>
+          ) : (
+            <h3 className="font-heading text-base font-bold text-th-dark leading-snug mb-1.5 group-hover:text-th-orange transition-colors">
+              {product.name}
+            </h3>
+          )}
           <p className="font-body text-xs text-th-dark/60 leading-relaxed">
             {product.description}
           </p>
@@ -315,18 +342,38 @@ function ProductCardContent({ product }: { product: ProductDisplay }) {
           <span className="font-heading text-lg font-bold text-th-dark">
             {product.price}
           </span>
-          <span className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg group-hover:bg-orange-600 transition-colors whitespace-nowrap">
-            {product.external ? (
-              <>
-                Shop Now
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
-                </svg>
-              </>
-            ) : product.badge === "PRE-ORDER" ? "Pre-Order"
-              : product.badge === "COMING SOON" ? "Learn More"
-              : "Shop Now"}
-          </span>
+
+          {canBuy ? (
+            <button
+              onClick={onBuyNow}
+              disabled={buying}
+              className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-wait"
+            >
+              {buying ? (
+                <>
+                  <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                  </svg>
+                  Processing...
+                </>
+              ) : product.badge === "PRE-ORDER" ? "Pre-Order" : "Buy Now"}
+            </button>
+          ) : isExternal ? (
+            <span className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg group-hover:bg-orange-600 transition-colors whitespace-nowrap">
+              Shop Now
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
+              </svg>
+            </span>
+          ) : product.badge === "COMING SOON" ? (
+            <span className="px-4 py-2 bg-th-light-peach text-th-brown font-body text-xs font-bold rounded-lg whitespace-nowrap">
+              Coming Soon
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 px-4 py-2 bg-th-orange text-white font-body text-xs font-bold rounded-lg group-hover:bg-orange-600 transition-colors whitespace-nowrap">
+              Learn More
+            </span>
+          )}
         </div>
       </div>
     </>

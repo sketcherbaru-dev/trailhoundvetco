@@ -20,8 +20,6 @@ const DEFAULT_FEATURES = [
   "Bites, cuts, heat stroke, altitude sickness & more",
 ];
 
-const FALLBACK_HERO = "https://api.builder.io/api/v1/image/assets/TEMP/bd22f6066058cc97279f9c8528b918497242a159?width=1560";
-
 export default function FieldGuide() {
   const navigate = useNavigate();
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-guide");
@@ -45,7 +43,7 @@ export default function FieldGuide() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-end overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
         <div className="absolute inset-0">
           {heroImages.length > 0 ? (
             heroImages.map((img, idx) => (
@@ -53,9 +51,7 @@ export default function FieldGuide() {
                 <img src={img.image_url} alt={img.title || "Hero"} className="w-full h-full object-cover object-center" />
               </div>
             ))
-          ) : (
-            <img src={FALLBACK_HERO} alt="Adventure with pets outdoors" className="w-full h-full object-cover object-center" />
-          )}
+          ) : null}
           <div className="absolute inset-0 bg-gradient-to-r from-th-dark/80 via-th-dark/50 to-th-dark/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-th-dark/60 via-transparent to-transparent" />
         </div>
