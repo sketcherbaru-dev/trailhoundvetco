@@ -5,6 +5,13 @@ export const createCourse: RequestHandler = async (req, res) => {
   try {
     const { title, description, level, format, thumbnail, category, curriculum, stripe_product_id, featured, start_date, end_date } = req.body;
 
+    const { data: existing } = await supabaseAnonClient
+      .from('courses').select('id').ilike('title', title).maybeSingle();
+    if (existing) {
+      res.status(409).json({ error: `A course titled "${title}" already exists.` });
+      return;
+    }
+
     const { data, error } = await supabaseAnonClient
       .from('courses')
       .insert([{

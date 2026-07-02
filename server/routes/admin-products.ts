@@ -5,6 +5,13 @@ export const createProduct: RequestHandler = async (req, res) => {
   try {
     const { name, description, price, image, category, badge, external_link, stripe_product_id, featured, field_guide_featured, shop_hero_featured, features } = req.body;
 
+    const { data: existing } = await supabaseAnonClient
+      .from('products').select('id').ilike('name', name).maybeSingle();
+    if (existing) {
+      res.status(409).json({ error: `A product named "${name}" already exists.` });
+      return;
+    }
+
     const { data, error } = await supabaseAnonClient
       .from('products')
       .insert([{

@@ -5,6 +5,20 @@ export const createPodcast: RequestHandler = async (req, res) => {
   try {
     const { title, description, audio_url, episode_number, published_date, transcript, image } = req.body;
 
+    const { data: existingEp } = await supabaseAnonClient
+      .from('podcasts').select('id').eq('episode_number', episode_number).maybeSingle();
+    if (existingEp) {
+      res.status(409).json({ error: `Episode number ${episode_number} already exists.` });
+      return;
+    }
+
+    const { data: existingTitle } = await supabaseAnonClient
+      .from('podcasts').select('id').ilike('title', title).maybeSingle();
+    if (existingTitle) {
+      res.status(409).json({ error: `A podcast titled "${title}" already exists.` });
+      return;
+    }
+
     const { data, error } = await supabaseAnonClient
       .from('podcasts')
       .insert([{

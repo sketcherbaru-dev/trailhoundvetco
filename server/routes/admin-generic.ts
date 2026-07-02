@@ -3,8 +3,17 @@ import { supabaseAnonClient } from '../lib/supabase';
 
 const ALLOWED_TABLES = [
   'field_reports', 'pack_testimonials', 'pack_gallery',
-  'hero_images', 'subscribers',
+  'hero_images', 'subscribers', 'pack_field_reports',
 ];
+
+// Field used to detect duplicates per table
+const DUPLICATE_FIELD: Record<string, string> = {
+  pack_testimonials: 'quote',
+  pack_field_reports: 'title',
+  field_reports: 'title',
+  hero_images: 'image_url',
+  pack_gallery: 'image_url',
+};
 
 export const genericCreate: RequestHandler = async (req, res) => {
   const { table } = req.params;
@@ -13,6 +22,16 @@ export const genericCreate: RequestHandler = async (req, res) => {
     return;
   }
   try {
+    const dupField = DUPLICATE_FIELD[table];
+    if (dupField && req.body[dupField]) {
+      const { data: existing } = await supabaseAnonClient
+        .from(table).select('id').ilike(dupField, req.body[dupField]).maybeSingle();
+      if (existing) {
+        res.status(409).json({ error: `A duplicate entry already exists (${dupField}: "${req.body[dupField]}").` });
+        return;
+      }
+    }
+
     const { data, error } = await supabaseAnonClient
       .from(table)
       .insert([req.body])
