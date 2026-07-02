@@ -25,6 +25,7 @@ import AdminPodcastsPage from "./pages/admin/AdminPodcastsPage";
 import AdminHeroPage from "./pages/admin/AdminHeroPage";
 import AdminPackPage from "./pages/admin/AdminPackPage";
 import GalleryPage from "./pages/GalleryPage";
+import ShopSuccess from "./pages/ShopSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/field-notes" element={<FieldNotes />} />
           <Route path="/the-pack" element={<ThePack />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/success" element={<ShopSuccess />} />
           <Route path="/shop/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
