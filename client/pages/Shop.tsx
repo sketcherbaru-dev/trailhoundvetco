@@ -255,6 +255,32 @@ export default function Shop() {
         </div>
       </section>
 
+      {/* The Collective Promise */}
+      <section className="bg-th-orange py-20 text-white text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: "radial-gradient(ellipse at 50% 120%, rgba(255,255,255,0.3) 0%, transparent 60%)"
+        }} />
+        <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col items-center gap-5">
+          {/* Compass/target icon */}
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="22" r="20" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/>
+            <circle cx="22" cy="22" r="13" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/>
+            <circle cx="22" cy="22" r="6" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/>
+            <line x1="22" y1="2" x2="22" y2="8" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="22" y1="36" x2="22" y2="42" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="2" y1="22" x2="8" y2="22" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="36" y1="22" x2="42" y2="22" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          <h2 className="font-heading text-3xl md:text-4xl font-black leading-tight">
+            The Collective Promise.
+          </h2>
+          <p className="font-body text-white/80 text-base max-w-md leading-relaxed">
+            Every purchase supports our Trailhound backcountry safety initiatives.
+          </p>
+          <div className="w-24 h-px bg-white/30 mt-2" />
+        </div>
+      </section>
+
       {/* Trust Banner */}
       <section className="py-14 bg-th-warm border-t border-th-warm-mid">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
