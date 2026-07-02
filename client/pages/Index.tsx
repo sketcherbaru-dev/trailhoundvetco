@@ -157,7 +157,7 @@ export default function Index() {
                 <img
                   src="/why-it-matters-dog.png"
                   alt="Dog in a field"
-                  className="w-full h-[480px] lg:h-[559px] object-cover"
+                  className="w-full h-[480px] lg:h-[559px] object-contain"
                 />
               </div>
               {/* Quote Card */}
