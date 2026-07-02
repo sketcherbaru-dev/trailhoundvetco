@@ -4,14 +4,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import Lightbox from "@/components/Lightbox";
-import TopographicPattern from "@/components/TopographicPattern";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
-import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 export default function ThePack() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("the-pack");
-  const testimonialsBg = useSectionBackground("the-pack-bg");
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [testimonials, setTestimonials] = useState<PackTestimonial[]>([]);
   const [gallery, setGallery] = useState<PackGalleryImage[]>([]);
@@ -150,17 +147,12 @@ export default function ThePack() {
       <section
         className="relative overflow-hidden pt-16 pb-0 bg-th-dark-teal"
       >
-        {/* Topographic pattern */}
-        <TopographicPattern />
-        {testimonialsBg && (
-          <>
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${testimonialsBg})` }}
-            />
-            <div className="absolute inset-0 bg-th-dark-teal/85" />
-          </>
-        )}
+        {/* Static background — replace public/pack-testimonial-bg.png to update */}
+        <div
+          className="absolute inset-0 bg-cover bg-bottom"
+          style={{ backgroundImage: "url(/pack-testimonial-bg.png)" }}
+        />
+        <div className="absolute inset-0 bg-th-dark-teal/70" />
         <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-th-orange">From the Pack</h2>

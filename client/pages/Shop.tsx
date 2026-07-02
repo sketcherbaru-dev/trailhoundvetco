@@ -339,9 +339,11 @@ function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
         </div>
 
         <div className="flex items-center justify-between gap-3 pt-2 border-t border-th-warm-mid">
-          <span className="font-heading text-lg font-bold text-th-dark">
-            {product.price}
-          </span>
+          {product.badge !== "COMING SOON" && (
+            <span className="font-heading text-lg font-bold text-th-dark">
+              {product.price}
+            </span>
+          )}
 
           {canBuy ? (
             <button

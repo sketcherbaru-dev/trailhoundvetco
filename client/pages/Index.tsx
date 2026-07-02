@@ -155,9 +155,9 @@ export default function Index() {
             <div className="relative mt-8 lg:mt-0">
               <div className="rounded-lg overflow-hidden bg-th-darker-teal">
                 <img
-                  src="https://api.builder.io/api/v1/image/assets/TEMP/bb28d6b4166b51557c80243e645c464b4f94a88e?width=1118"
+                  src="/why-it-matters-dog.png"
                   alt="Dog in a field"
-                  className="w-full h-[480px] lg:h-[559px] object-cover mix-blend-luminosity"
+                  className="w-full h-[480px] lg:h-[559px] object-cover"
                 />
               </div>
               {/* Quote Card */}
