@@ -46,7 +46,7 @@ export default function GalleryPage() {
             <div className="text-center py-16 text-th-teal/50 font-body">Loading gallery...</div>
           ) : gallery.length === 0 ? (
             <div className="text-center py-16 text-th-teal/50 font-body text-sm">
-              Belum ada foto. Tambahkan melalui{" "}
+              No photos yet. Add them via the{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">
                 admin panel
               </Link>

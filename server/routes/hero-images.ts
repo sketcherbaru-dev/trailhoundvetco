@@ -9,7 +9,7 @@ export const getHeroImages: RequestHandler = async (req, res) => {
       .select('*')
       .eq('active', true)
       .eq('page', page)
-      .order('display_order', { ascending: true })
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .limit(6);
 
     if (error) { res.status(400).json({ data: [], error: error.message }); return; }

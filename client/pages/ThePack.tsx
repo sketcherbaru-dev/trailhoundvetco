@@ -98,7 +98,7 @@ export default function ThePack() {
               <p className="font-body text-th-teal text-sm mt-1">Tales from the Trail</p>
             </div>
             <Link
-              to="#"
+              to="/field-notes"
               className="font-body text-sm font-bold text-th-orange hover:underline flex items-center gap-1 mt-1 whitespace-nowrap"
             >
               VIEW ALL STORIES
@@ -110,7 +110,7 @@ export default function ThePack() {
 
           {fieldReports.length === 0 ? (
             <div className="text-center py-16 text-th-teal/50 font-body text-sm">
-              Belum ada field report. Tambahkan melalui{" "}
+              No field reports yet. Add them via the{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">
                 admin panel
               </Link>
@@ -161,7 +161,7 @@ export default function ThePack() {
 
           {testimonials.length === 0 ? (
             <div className="text-center py-12 text-th-dark/40 font-body text-sm relative z-10">
-              Belum ada testimoni. Tambahkan melalui{" "}
+              No testimonials yet. Add them via the{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">admin panel</Link>.
             </div>
           ) : (
@@ -199,7 +199,7 @@ export default function ThePack() {
 
           {gallery.length === 0 ? (
             <div className="text-center py-12 text-th-teal/50 font-body text-sm">
-              Belum ada foto galeri. Tambahkan melalui{" "}
+              No gallery photos yet. Add them via the{" "}
               <Link to="/admin/the-pack" className="text-th-orange hover:underline font-semibold">admin panel</Link>.
             </div>
           ) : (

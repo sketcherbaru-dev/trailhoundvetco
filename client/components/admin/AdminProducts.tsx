@@ -118,6 +118,19 @@ const AdminProducts = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'products', id, direction }),
+      });
+      await fetchProducts();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (product: Product) => {
     setFormData({
       name: product.name,
@@ -206,7 +219,7 @@ const AdminProducts = () => {
                       checked={formData.hide_price}
                       onChange={(e) => setFormData({ ...formData, hide_price: e.target.checked })}
                     />
-                    <span className="text-xs text-gray-500">Sembunyikan harga</span>
+                    <span className="text-xs text-gray-500">Hide price</span>
                   </label>
                 </div>
                 <div>
@@ -256,7 +269,7 @@ const AdminProducts = () => {
                     }}
                     className="w-full px-3 py-2 border rounded-md"
                   >
-                    <option value="__custom__">— Custom / Tidak ada —</option>
+                    <option value="__custom__">— None / Custom —</option>
                     {BADGE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
@@ -267,7 +280,7 @@ const AdminProducts = () => {
                       className="mt-2"
                       value={formData.badge}
                       onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                      placeholder="Ketik badge custom, atau kosongkan"
+                      placeholder="Type custom badge, or leave empty"
                     />
                   )}
                 </div>
@@ -301,7 +314,7 @@ const AdminProducts = () => {
                   rows={4}
                   placeholder={"Covers 50+ trail emergencies step-by-step\nBuilt for the moments you don't plan for\nBites, cuts, heat stroke, altitude & more"}
                 />
-                <p className="text-xs text-gray-400 mt-1">Setiap baris = satu poin bullet di halaman Field Guide</p>
+                <p className="text-xs text-gray-400 mt-1">Each line = one bullet point on the Field Guide page</p>
               </div>
 
               <div className="flex flex-col gap-2">
@@ -373,6 +386,7 @@ const AdminProducts = () => {
                 <TableHead>Category</TableHead>
                 <TableHead>Featured</TableHead>
                 <TableHead>Field Guide</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -384,6 +398,12 @@ const AdminProducts = () => {
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.featured ? "✓" : "—"}</TableCell>
                   <TableCell>{product.field_guide_featured ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(product.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(product.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

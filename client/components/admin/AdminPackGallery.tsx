@@ -87,6 +87,19 @@ const AdminPackGallery = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'pack_gallery', id, direction }),
+      });
+      await fetchImages();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (img: PackGalleryImage) => {
     setFormData({
       image_url: img.image_url,
@@ -166,6 +179,7 @@ const AdminPackGallery = () => {
                 <TableHead>Alt Text</TableHead>
                 <TableHead>Order</TableHead>
                 <TableHead>Active</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -176,6 +190,12 @@ const AdminPackGallery = () => {
                   <TableCell className="text-sm text-gray-600">{img.alt_text || "—"}</TableCell>
                   <TableCell>{img.display_order}</TableCell>
                   <TableCell>{img.active ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(img.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(img.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(img)}>Edit</Button>

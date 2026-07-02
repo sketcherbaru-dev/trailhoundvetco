@@ -112,6 +112,19 @@ const AdminCourses = () => {
     }
   };
 
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    try {
+      await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'courses', id, direction }),
+      });
+      await fetchCourses();
+    } catch {
+      toast.error('Failed to reorder');
+    }
+  };
+
   const handleEdit = (course: Course) => {
     setFormData({
       title: course.title,
@@ -190,6 +203,7 @@ const AdminCourses = () => {
                     <option>Beginner</option>
                     <option>Intermediate</option>
                     <option>Advanced</option>
+                    <option>Professional</option>
                   </select>
                 </div>
                 <div>
@@ -318,6 +332,7 @@ const AdminCourses = () => {
                 <TableHead>Format</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Featured</TableHead>
+                <TableHead>Order</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -329,6 +344,12 @@ const AdminCourses = () => {
                   <TableCell>{course.format}</TableCell>
                   <TableCell>{course.category}</TableCell>
                   <TableCell>{course.featured ? "✓" : "—"}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(course.id, 'up')}>↑</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleReorder(course.id, 'down')}>↓</Button>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button
