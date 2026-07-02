@@ -94,8 +94,6 @@ export default function Shop() {
       ? products
       : products.filter((p) => p.category === activeCategory);
 
-  const STATIC_HERO_IMG = "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800";
-
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
       <Navbar />
@@ -144,33 +142,25 @@ export default function Shop() {
 
             {/* Featured Product Image */}
             <div className="lg:w-[400px] xl:w-[480px] flex-shrink-0">
-              {heroProduct !== undefined && (
+              {heroProduct && (
                 <div className="relative">
                   <div className="absolute -inset-4 bg-th-mint/10 rounded-2xl blur-xl" />
-                  {heroProduct ? (
-                    heroProduct.external_link ? (
-                      <a href={heroProduct.external_link} target="_blank" rel="noopener noreferrer">
-                        <img
-                          src={heroProduct.image}
-                          alt={heroProduct.name}
-                          className="relative w-full rounded-2xl shadow-2xl object-cover"
-                        />
-                      </a>
-                    ) : (
-                      <Link to={`/shop/${heroProduct.id}`}>
-                        <img
-                          src={heroProduct.image}
-                          alt={heroProduct.name}
-                          className="relative w-full rounded-2xl shadow-2xl object-cover"
-                        />
-                      </Link>
-                    )
+                  {heroProduct.external_link ? (
+                    <a href={heroProduct.external_link} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={heroProduct.image}
+                        alt={heroProduct.name}
+                        className="relative w-full rounded-2xl shadow-2xl object-cover"
+                      />
+                    </a>
                   ) : (
-                    <img
-                      src={STATIC_HERO_IMG}
-                      alt="Trailhound Field Guide"
-                      className="relative w-full rounded-2xl shadow-2xl object-cover"
-                    />
+                    <Link to={`/shop/${heroProduct.id}`}>
+                      <img
+                        src={heroProduct.image}
+                        alt={heroProduct.name}
+                        className="relative w-full rounded-2xl shadow-2xl object-cover"
+                      />
+                    </Link>
                   )}
                 </div>
               )}
