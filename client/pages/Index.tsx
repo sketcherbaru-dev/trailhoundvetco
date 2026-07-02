@@ -153,11 +153,11 @@ export default function Index() {
 
             {/* Right: Image + Quote */}
             <div className="relative mt-8 lg:mt-0">
-              <div className="rounded-lg overflow-hidden bg-th-darker-teal">
+              <div className="rounded-lg overflow-hidden bg-th-cream">
                 <img
                   src="/why-it-matters-dog.png"
                   alt="Dog in a field"
-                  className="w-full h-[480px] lg:h-[559px] object-cover"
+                  className="w-full h-[480px] lg:h-[559px] object-contain"
                 />
               </div>
               {/* Quote Card */}
