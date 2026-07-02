@@ -155,11 +155,6 @@ export default function Shop() {
                           alt={heroProduct.name}
                           className="relative w-full rounded-2xl shadow-2xl object-cover"
                         />
-                        {heroProduct.badge && (
-                          <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide uppercase">
-                            {heroProduct.badge}
-                          </div>
-                        )}
                       </a>
                     ) : (
                       <Link to={`/shop/${heroProduct.id}`}>
@@ -168,24 +163,14 @@ export default function Shop() {
                           alt={heroProduct.name}
                           className="relative w-full rounded-2xl shadow-2xl object-cover"
                         />
-                        {heroProduct.badge && (
-                          <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide uppercase">
-                            {heroProduct.badge}
-                          </div>
-                        )}
                       </Link>
                     )
                   ) : (
-                    <>
-                      <img
-                        src={STATIC_HERO_IMG}
-                        alt="Trailhound Field Guide"
-                        className="relative w-full rounded-2xl shadow-2xl object-cover"
-                      />
-                      <div className="absolute -top-3 -right-3 bg-th-orange text-white font-body text-xs font-bold px-4 py-2 rounded-full shadow-lg tracking-wide">
-                        PRE-ORDER NOW
-                      </div>
-                    </>
+                    <img
+                      src={STATIC_HERO_IMG}
+                      alt="Trailhound Field Guide"
+                      className="relative w-full rounded-2xl shadow-2xl object-cover"
+                    />
                   )}
                 </div>
               )}
@@ -278,48 +263,6 @@ export default function Shop() {
             Every purchase supports our Trailhound backcountry safety initiatives.
           </p>
           <div className="w-24 h-px bg-white/30 mt-2" />
-        </div>
-      </section>
-
-      {/* Trust Banner */}
-      <section className="py-14 bg-th-warm border-t border-th-warm-mid">
-        <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-th-orange/10 flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F45E15" strokeWidth="1.8">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">Vet-Approved Gear</h3>
-              <p className="font-body text-sm text-th-dark/60">
-                Every product is reviewed and approved by our veterinary team.
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-th-orange/10 flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F45E15" strokeWidth="1.8">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">Free Shipping Over $75</h3>
-              <p className="font-body text-sm text-th-dark/60">
-                On all domestic orders — gear up without the added cost.
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-th-orange/10 flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F45E15" strokeWidth="1.8">
-                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-base font-bold text-th-dark">Purpose-Driven Brand</h3>
-              <p className="font-body text-sm text-th-dark/60">
-                10% of proceeds fund wilderness pet rescue operations.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
