@@ -152,14 +152,19 @@ export default function ThePack() {
       >
         {/* Topographic pattern */}
         <TopographicPattern />
-        {testimonialsBg && (
+        {testimonialsBg ? (
           <>
             <div
-              className="absolute inset-0 bg-cover bg-center"
+              className="absolute inset-0 bg-cover bg-bottom"
               style={{ backgroundImage: `url(${testimonialsBg})` }}
             />
-            <div className="absolute inset-0 bg-th-dark-teal/85" />
+            <div className="absolute inset-0 bg-th-dark-teal/70" />
           </>
+        ) : (
+          <div
+            className="absolute inset-0 bg-cover bg-bottom opacity-20"
+            style={{ backgroundImage: "url(/pack-testimonial-bg.png)" }}
+          />
         )}
         <div className="relative z-10 max-w-screen-2xl mx-auto px-6 md:px-12">
           <div className="text-center mb-10">
