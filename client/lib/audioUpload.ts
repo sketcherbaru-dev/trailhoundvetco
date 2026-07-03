@@ -34,7 +34,18 @@ export async function uploadAudio(
     });
 
   if (error) {
-    // Common case: bucket not created yet or policy missing
+    const msg = (error.message || "").toLowerCase();
+    if (msg.includes("row-level security") || msg.includes("policy") || msg.includes("unauthorized")) {
+      throw new Error(
+        "Upload blocked by Storage permissions. Run supabase-podcast-audio-storage.sql (or add an INSERT policy for the 'podcast-audio' bucket) in Supabase.",
+      );
+    }
+    if (msg.includes("bucket not found") || msg.includes("not found")) {
+      throw new Error("Storage bucket 'podcast-audio' does not exist yet. Run supabase-podcast-audio-storage.sql in Supabase.");
+    }
+    if (msg.includes("exceeded") || msg.includes("maximum") || msg.includes("size")) {
+      throw new Error("Audio file exceeds the bucket size limit. Raise the bucket's file size limit in Supabase Storage settings.");
+    }
     throw new Error(error.message || "Failed to upload audio");
   }
 
