@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useSectionBackground } from "@/hooks/useSectionBackground";
 import TopographicPattern from "@/components/TopographicPattern";
 
@@ -193,14 +194,17 @@ export default function NewsletterSection() {
                     <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.16 8.16 0 004.77 1.52V6.79a4.85 4.85 0 01-1-.1z" />
                   </svg>
                 </a>
-                <a
-                  href="#"
+                <Link
+                  to="/podcasts"
+                  aria-label="The Trailhound Podcast"
+                  title="The Trailhound Podcast"
                   className="w-full py-3 rounded-lg bg-white/15 hover:bg-white/25 transition-colors flex items-center justify-center"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 1a11 11 0 100 22A11 11 0 0012 1zm0 2a9 9 0 110 18A9 9 0 0112 3zm0 3a2 2 0 100 4 2 2 0 000-4zm0 6c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                    <path d="M19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 008 8.94V24h2v-3.06A9 9 0 0021 12v-2h-2z" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           </div>

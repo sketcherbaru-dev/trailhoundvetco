@@ -7,6 +7,7 @@ const navLinks = [
   { href: "/basecamp-courses", label: "Basecamp Course" },
   { href: "/the-pack", label: "The Pack" },
   { href: "/field-notes", label: "Field Notes" },
+  { href: "/podcasts", label: "Podcasts" },
   { href: "/shop", label: "Shop" },
 ];
 

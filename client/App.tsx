@@ -11,6 +11,7 @@ import FieldGuide from "./pages/FieldGuide";
 import BasecampCourses from "./pages/BasecampCourses";
 import FieldNotes from "./pages/FieldNotes";
 import ThePack from "./pages/ThePack";
+import Podcasts from "./pages/Podcasts";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/basecamp-courses" element={<BasecampCourses />} />
           <Route path="/field-notes" element={<FieldNotes />} />
           <Route path="/the-pack" element={<ThePack />} />
+          <Route path="/podcasts" element={<Podcasts />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/shop/success" element={<ShopSuccess />} />
           <Route path="/shop/:id" element={<ProductDetail />} />
