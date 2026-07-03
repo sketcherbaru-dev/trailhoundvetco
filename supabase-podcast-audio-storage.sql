@@ -1,10 +1,10 @@
 -- Run this ONCE in Supabase → SQL Editor to enable podcast audio uploads.
 -- Creates a public "podcast-audio" storage bucket and allows uploads/reads.
 
--- 1. Create the public bucket (idempotent)
-insert into storage.buckets (id, name, public)
-values ('podcast-audio', 'podcast-audio', true)
-on conflict (id) do update set public = true;
+-- 1. Create the public bucket (idempotent) with a 100MB per-file limit
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('podcast-audio', 'podcast-audio', true, 104857600)
+on conflict (id) do update set public = true, file_size_limit = 104857600;
 
 -- 2. Allow anyone to UPLOAD into this bucket (admin panel uses the anon key)
 drop policy if exists "podcast_audio_insert" on storage.objects;
