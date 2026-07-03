@@ -91,7 +91,9 @@ export default function ProductDetail() {
                   <img
                     src={product.image || "https://api.builder.io/api/v1/image/assets/TEMP/a184a6ce26a14b7a9a50b8053da8588fee029508?width=800"}
                     alt={product.name}
-                    className="relative w-full rounded-2xl shadow-2xl object-cover aspect-square"
+                    className={`relative w-full rounded-2xl shadow-2xl aspect-square object-center ${
+                      product.category === "books" ? "object-contain bg-white p-6" : "object-cover"
+                    }`}
                   />
                 </div>
               </div>

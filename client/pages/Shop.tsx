@@ -281,6 +281,11 @@ interface CardProps {
 function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
   const isExternal = product.external;
   const canBuy = !!onBuyNow;
+  // Field Guides (books) show their full cover, centered — not cropped like other products
+  const isBook = product.category === "books";
+  const imgClass = `w-full h-full object-center group-hover:scale-105 transition-transform duration-500 ${
+    isBook ? "object-contain p-4" : "object-cover"
+  }`;
 
   return (
     <>
@@ -291,14 +296,14 @@ function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              className={imgClass}
             />
           </Link>
         ) : (
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={imgClass}
           />
         )}
         <div className="absolute top-3 left-3">
