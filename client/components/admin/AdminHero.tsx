@@ -14,10 +14,6 @@ const PAGE_OPTIONS = [
   { value: "field-notes", label: "Field Notes" },
   { value: "the-pack", label: "The Pack" },
   { value: "shop", label: "Shop" },
-  { value: "contact", label: "Contact" },
-  { value: "the-pack-bg", label: "BG: Testimonials" },
-  { value: "newsletter-bg", label: "BG: Newsletter" },
-  { value: "footer-bg", label: "BG: Footer" },
 ];
 
 const AdminHero = () => {

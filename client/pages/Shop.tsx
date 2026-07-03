@@ -110,7 +110,7 @@ export default function Shop() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-th-dark-teal">
+      <section className="relative min-h-[80vh] flex items-end overflow-hidden bg-th-dark-teal">
         <div className="absolute inset-0">
           {heroImages.map((img, idx) => (
             <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === heroIndex ? "opacity-100" : "opacity-0"}`}>
