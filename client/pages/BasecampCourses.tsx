@@ -30,6 +30,7 @@ interface CourseDisplay extends Course {
 
 export default function BasecampCourses() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("basecamp-courses");
+  const currentHero = heroImages[heroIndex];
   const [activeFilter, setActiveFilter] = useState("all");
   const [courses, setCourses] = useState<CourseDisplay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,13 +95,11 @@ export default function BasecampCourses() {
             </span>
 
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
-              Every Summit Starts Here
+              {currentHero?.title || "Every Summit Starts Here"}
             </h1>
 
             <p className="font-body text-white/80 text-base md:text-lg leading-relaxed mb-8 max-w-sm">
-              Every great summit starts at basecamp — where you build the
-              skills, confidence, and preparation to handle whatever the trail
-              brings.
+              {currentHero?.subtitle || "Every great summit starts at basecamp — where you build the skills, confidence, and preparation to handle whatever the trail brings."}
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -108,11 +107,19 @@ export default function BasecampCourses() {
                 href="#courses"
                 className="inline-flex items-center px-6 py-3 bg-th-orange text-white font-body font-bold text-sm tracking-widest uppercase rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5"
               >
-                EXPLORE CURRICULUM
+                {currentHero?.cta_text || "EXPLORE CURRICULUM"}
               </a>
-              <button className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/40 text-white font-body font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-white/10 transition-colors">
-                WATCH TRAILER
-              </button>
+              {currentHero?.cta_url && (
+                <button
+                  onClick={() => window.open(currentHero.cta_url!, "_blank")}
+                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/40 text-white font-body font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  WATCH TRAILER
+                </button>
+              )}
             </div>
             {heroImages.length > 1 && (
               <div className="flex items-center gap-2 mt-8">

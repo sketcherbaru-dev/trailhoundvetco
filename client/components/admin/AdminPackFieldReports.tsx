@@ -102,7 +102,7 @@ const AdminPackFieldReports = () => {
       await fetch('/api/admin/reorder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table: 'pack_field_reports', id, direction }),
+        body: JSON.stringify({ table: 'field_reports', id, direction }),
       });
       await fetchReports();
     } catch {

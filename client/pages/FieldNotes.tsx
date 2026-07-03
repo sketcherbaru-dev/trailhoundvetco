@@ -21,6 +21,7 @@ interface ArticleDisplay extends Article {
 
 export default function FieldNotes() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("field-notes");
+  const currentHero = heroImages[heroIndex];
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParamQuery = searchParams.get("search") || "";
 
@@ -105,12 +106,28 @@ export default function FieldNotes() {
               EDUCATION HUB
             </p>
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
-              Field Notes
+              {currentHero?.title || "Field Notes"}
             </h1>
-            <p className="font-body text-white/80 text-lg md:text-xl max-w-xl leading-relaxed">
-              Searchable veterinary first aid articles, trail tips, and expert
-              guides — written for pet owners who go further.
+            <p className="font-body text-white/80 text-lg md:text-xl max-w-xl leading-relaxed mb-8">
+              {currentHero?.subtitle || "Searchable veterinary first aid articles, trail tips, and expert guides — written for pet owners who go further."}
             </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="#articles"
+                className="inline-flex items-center px-6 py-3 bg-th-orange text-white font-body font-bold text-sm tracking-widest uppercase rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5"
+              >
+                Browse Articles
+              </a>
+              <button
+                onClick={() => document.getElementById("field-notes-search")?.focus()}
+                className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/40 text-white font-body font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                </svg>
+                Search Notes
+              </button>
+            </div>
             {heroImages.length > 1 && (
               <div className="flex items-center gap-2 mt-8">
                 {heroImages.map((_, idx) => (
@@ -145,6 +162,7 @@ export default function FieldNotes() {
           {/* Search Input */}
           <div className="relative max-w-md w-full">
             <input
+              id="field-notes-search"
               type="text"
               placeholder="Search articles..."
               value={searchQuery}
@@ -175,7 +193,7 @@ export default function FieldNotes() {
       </section>
 
       {/* Articles Grid */}
-      <section className="py-16 flex-1">
+      <section id="articles" className="py-16 flex-1">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
           {loading ? (
             <div className="text-center py-20">

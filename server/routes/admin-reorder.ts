@@ -7,7 +7,7 @@ const ALLOWED_TABLES = [
   'courses',
   'podcasts',
   'pack_testimonials',
-  'pack_field_reports',
+  'field_reports',
   'pack_gallery',
   'hero_images',
 ] as const;

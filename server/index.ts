@@ -84,6 +84,9 @@ export function createServer() {
   // Hero images
   app.get("/api/hero-images", getHeroImages);
 
+  // Reorder (sort_order) — must come BEFORE generic :table route
+  app.post("/api/admin/reorder", reorderItem);
+
   // Generic admin routes — must come AFTER specific admin routes
   app.post("/api/admin/:table", genericCreate);
   app.put("/api/admin/:table/:id", genericUpdate);
@@ -93,9 +96,6 @@ export function createServer() {
   app.get("/api/pack-field-reports", getPackFieldReports);
   app.get("/api/pack-testimonials", getPackTestimonials);
   app.get("/api/pack-gallery", getPackGallery);
-
-  // Reorder (sort_order)
-  app.post("/api/admin/reorder", reorderItem);
 
   // Stripe checkout
   app.post("/api/checkout/create-session", createCheckoutSession);
