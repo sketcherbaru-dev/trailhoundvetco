@@ -13,6 +13,7 @@ const PAGE_OPTIONS = [
   { value: "basecamp-courses", label: "Basecamp Courses" },
   { value: "field-notes", label: "Field Notes" },
   { value: "the-pack", label: "The Pack" },
+  { value: "podcasts", label: "Podcasts" },
   { value: "shop", label: "Shop" },
 ];
 
