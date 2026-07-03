@@ -113,7 +113,6 @@ export default function NewsletterSection() {
                   </button>
                   <button
                     onClick={handleUnsubscribe}
-                    disabled={status === "loading" as unknown as boolean}
                     className="flex-1 px-4 py-2.5 bg-red-500/30 border border-red-400/30 text-red-300 font-body text-sm font-semibold rounded-lg hover:bg-red-500/40 transition-colors disabled:opacity-60"
                   >
                     Unsubscribe

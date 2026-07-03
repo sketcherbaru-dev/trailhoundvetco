@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Podcast } from "@shared/api";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/imageUpload";
+import { uploadAudio } from "@/lib/audioUpload";
 
 const AdminPodcasts = () => {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
@@ -24,6 +25,29 @@ const AdminPodcasts = () => {
     image: "",
   });
   const [uploading, setUploading] = useState(false);
+  const [audioMode, setAudioMode] = useState<"link" | "upload">("link");
+  const [audioUploading, setAudioUploading] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioFileName, setAudioFileName] = useState("");
+
+  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setAudioUploading(true);
+      setAudioProgress(0);
+      const url = await uploadAudio(file, setAudioProgress);
+      setFormData((prev) => ({ ...prev, audio_url: url }));
+      setAudioFileName(file.name);
+      toast.success("Audio uploaded successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload audio");
+      console.error(error);
+    } finally {
+      setAudioUploading(false);
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,6 +86,15 @@ const AdminPodcasts = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (audioUploading) {
+      toast.error("Please wait for the audio upload to finish");
+      return;
+    }
+    if (!formData.audio_url.trim()) {
+      toast.error(audioMode === "upload" ? "Please upload an audio file first" : "Please enter an audio URL");
+      return;
+    }
 
     try {
       const url = editingId ? `/api/admin/podcasts/${editingId}` : "/api/admin/podcasts";
@@ -131,6 +164,8 @@ const AdminPodcasts = () => {
       transcript: podcast.transcript || "",
       image: podcast.image || "",
     });
+    setAudioMode("link");
+    setAudioFileName("");
     setEditingId(podcast.id);
     setIsOpen(true);
   };
@@ -145,6 +180,9 @@ const AdminPodcasts = () => {
       transcript: "",
       image: "",
     });
+    setAudioMode("link");
+    setAudioFileName("");
+    setAudioProgress(0);
     setEditingId(null);
   };
 
@@ -200,15 +238,65 @@ const AdminPodcasts = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Audio URL</label>
-                <Input
-                  value={formData.audio_url}
-                  onChange={(e) => setFormData({ ...formData, audio_url: e.target.value })}
-                  type="url"
-                  placeholder="https://example.com/audio.mp3"
-                  required
-                />
+              <div className="space-y-2">
+                <label className="block text-sm font-medium mb-1">Audio</label>
+                {/* Mode toggle: paste a link OR upload a file */}
+                <div className="inline-flex rounded-md border overflow-hidden text-sm mb-1">
+                  <button
+                    type="button"
+                    onClick={() => setAudioMode("link")}
+                    className={`px-3 py-1.5 font-medium transition-colors ${
+                      audioMode === "link" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    Paste Link
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAudioMode("upload")}
+                    className={`px-3 py-1.5 font-medium transition-colors ${
+                      audioMode === "upload" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    Upload File
+                  </button>
+                </div>
+
+                {audioMode === "link" ? (
+                  <Input
+                    value={formData.audio_url}
+                    onChange={(e) => setFormData({ ...formData, audio_url: e.target.value })}
+                    type="url"
+                    placeholder="https://example.com/audio.mp3"
+                    required={audioMode === "link"}
+                  />
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleAudioUpload}
+                      disabled={audioUploading}
+                      className="block w-full text-sm border rounded-md p-2"
+                    />
+                    {audioUploading && (
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div className="bg-orange-500 h-2 transition-all" style={{ width: `${audioProgress}%` }} />
+                      </div>
+                    )}
+                    {formData.audio_url && !audioUploading && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-green-600">✓ Uploaded{audioFileName ? `: ${audioFileName}` : ""}</p>
+                        <audio controls src={formData.audio_url} className="w-full h-9" />
+                      </div>
+                    )}
+                  </div>
+                )}
+                <p className="text-xs text-gray-400">
+                  {audioMode === "link"
+                    ? "Paste a direct link to an audio file (mp3, m4a, etc.)."
+                    : "Upload an audio file (max 100MB). It is stored in Supabase Storage."}
+                </p>
               </div>
 
               <div className="space-y-2">
