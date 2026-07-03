@@ -53,7 +53,7 @@ export default function NewsletterSection() {
   };
 
   return (
-    <section className="py-20 bg-th-dark-teal relative overflow-hidden">
+    <section id="join-the-pack" className="py-20 bg-th-dark-teal relative overflow-hidden">
       {/* Topographic pattern background */}
       <TopographicPattern />
 

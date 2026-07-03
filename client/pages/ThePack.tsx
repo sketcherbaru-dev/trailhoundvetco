@@ -10,7 +10,12 @@ import { useSectionBackground } from "@/hooks/useSectionBackground";
 
 export default function ThePack() {
   const { images: heroImages, index: heroIndex, setIndex: setHeroIndex } = useHeroImages("the-pack");
+  const currentHero = heroImages[heroIndex];
   const testimonialsBg = useSectionBackground("the-pack-bg");
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [testimonials, setTestimonials] = useState<PackTestimonial[]>([]);
   const [gallery, setGallery] = useState<PackGalleryImage[]>([]);
@@ -61,18 +66,22 @@ export default function ThePack() {
         <div className="relative z-10 w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-16 pt-32">
           <div className="max-w-lg">
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
-              Life's Better with a Pack.
+              {currentHero?.title || "Life's Better with a Pack."}
             </h1>
             <p className="font-body text-white/80 text-base md:text-lg leading-relaxed mb-8 max-w-md">
-              Join a collective of wilderness enthusiasts and expert
-              veterinarians dedicated to keeping our four-legged explorers safe
-              on every trail, peak, and paddle.
+              {currentHero?.subtitle || "Join a collective of wilderness enthusiasts and expert veterinarians dedicated to keeping our four-legged explorers safe on every trail, peak, and paddle."}
             </p>
             <div className="flex flex-wrap gap-3">
-              <button className="inline-flex items-center px-6 py-3 bg-th-orange text-white font-body font-semibold text-base rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5">
+              <button
+                onClick={() => scrollTo("join-the-pack")}
+                className="inline-flex items-center px-6 py-3 bg-th-orange text-white font-body font-semibold text-base rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-200 hover:-translate-y-0.5"
+              >
                 Join the Pack
               </button>
-              <button className="inline-flex items-center px-6 py-3 border-2 border-white/40 text-white font-body font-semibold text-base rounded-lg hover:bg-white/10 transition-colors">
+              <button
+                onClick={() => scrollTo("from-the-pack")}
+                className="inline-flex items-center px-6 py-3 border-2 border-white/40 text-white font-body font-semibold text-base rounded-lg hover:bg-white/10 transition-colors"
+              >
                 Explore Stories
               </button>
             </div>
@@ -146,7 +155,7 @@ export default function ThePack() {
       </section>
 
       {/* From the Pack / Testimonials */}
-      <section className="relative overflow-hidden pt-16 pb-0 bg-th-cream">
+      <section id="from-the-pack" className="relative overflow-hidden pt-16 pb-0 bg-th-cream">
         {/* Background: DB-driven if set, else static file — replace public/pack-testimonial-bg.png to update */}
         <div
           className="absolute inset-0 bg-cover bg-bottom"
