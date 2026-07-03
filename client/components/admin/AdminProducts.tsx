@@ -22,6 +22,7 @@ const AdminProducts = () => {
     price: 0,
     hide_price: false,
     image: "",
+    image_fit: "cover",
     category: "books",
     badge: "",
     external_link: "",
@@ -138,6 +139,7 @@ const AdminProducts = () => {
       price: product.price ?? 0,
       hide_price: product.price == null,
       image: product.image,
+      image_fit: product.image_fit || "cover",
       category: product.category,
       badge: product.badge || "",
       external_link: product.external_link || "",
@@ -158,6 +160,7 @@ const AdminProducts = () => {
       price: 0,
       hide_price: false,
       image: "",
+      image_fit: "cover",
       category: "books",
       badge: "",
       external_link: "",
@@ -252,9 +255,28 @@ const AdminProducts = () => {
                 {formData.image && (
                   <div className="mt-2 space-y-1">
                     <p className="text-xs text-green-600">✓ Uploaded</p>
-                    <img src={formData.image} alt="Product preview" className="w-20 h-20 object-cover rounded" />
+                    <img
+                      src={formData.image}
+                      alt="Product preview"
+                      className={`w-20 h-20 rounded border ${formData.image_fit === "contain" ? "object-contain p-1 bg-white" : "object-cover"}`}
+                    />
                   </div>
                 )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Image Display</label>
+                <select
+                  value={formData.image_fit}
+                  onChange={(e) => setFormData({ ...formData, image_fit: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="cover">Fill / Crop (default) — image fills the frame</option>
+                  <option value="contain">Full image — show the whole image, centered (e.g. Field Guide covers)</option>
+                </select>
+                <p className="text-xs text-gray-400 mt-1">
+                  Use "Full image" for book covers or graphics that shouldn't be cropped.
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

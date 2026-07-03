@@ -36,6 +36,7 @@ export interface Product {
   description: string;
   price: number | null;
   image: string;
+  image_fit?: string; // 'cover' (crop to fill) or 'contain' (show full image, centered)
   category: string;
   badge?: string;
   external_link?: string;

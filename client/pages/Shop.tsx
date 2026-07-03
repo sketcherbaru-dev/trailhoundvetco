@@ -33,6 +33,7 @@ interface ProductDisplay {
   badge: BadgeType;
   category: string;
   image: string;
+  image_fit: string;
   external: boolean;
   href: string;
 }
@@ -63,6 +64,7 @@ export default function Shop() {
             badge: (p.badge as BadgeType) || "NEW",
             category: p.category,
             image: p.image,
+            image_fit: p.image_fit || (p.category === "books" ? "contain" : "cover"),
             external: !!(p.external_link),
             href: p.external_link || `/shop/${p.id}`,
           }));
@@ -281,10 +283,11 @@ interface CardProps {
 function ProductCardContent({ product, onBuyNow, buying }: CardProps) {
   const isExternal = product.external;
   const canBuy = !!onBuyNow;
-  // Field Guides (books) show their full cover, centered — not cropped like other products
-  const isBook = product.category === "books";
+  // Image fit is controlled per-product from the backend: "contain" shows the
+  // full image centered (e.g. Field Guide covers), "cover" crops to fill.
+  const isContain = product.image_fit === "contain";
   const imgClass = `w-full h-full object-center group-hover:scale-105 transition-transform duration-500 ${
-    isBook ? "object-contain p-4" : "object-cover"
+    isContain ? "object-contain p-4" : "object-cover"
   }`;
 
   return (

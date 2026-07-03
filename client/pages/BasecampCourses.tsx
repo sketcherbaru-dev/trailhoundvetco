@@ -18,10 +18,10 @@ const filters = [
 type LevelKey = "Beginner" | "Intermediate" | "Advanced" | "Professional";
 
 const levelStyles: Record<LevelKey, string> = {
-  Beginner: "bg-th-orange text-white",
-  Intermediate: "bg-amber-500 text-white",
-  Advanced: "bg-th-dark-teal text-th-cream",
-  Professional: "bg-th-dark text-th-cream",
+  Beginner: "bg-gray-400 text-white",
+  Intermediate: "bg-yellow-400 text-th-dark",
+  Advanced: "bg-amber-700 text-white",
+  Professional: "bg-red-600 text-white",
 };
 
 interface CourseDisplay extends Course {

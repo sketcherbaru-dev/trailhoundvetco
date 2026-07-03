@@ -3,7 +3,7 @@ import { supabaseAnonClient } from '../lib/supabase';
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
-    const { name, description, price, image, category, badge, external_link, stripe_product_id, featured, field_guide_featured, shop_hero_featured, features } = req.body;
+    const { name, description, price, image, image_fit, category, badge, external_link, stripe_product_id, featured, field_guide_featured, shop_hero_featured, features } = req.body;
 
     const { data: existing } = await supabaseAnonClient
       .from('products').select('id').ilike('name', name).maybeSingle();
@@ -19,6 +19,7 @@ export const createProduct: RequestHandler = async (req, res) => {
         description,
         price,
         image,
+        image_fit: image_fit || 'cover',
         category,
         badge,
         external_link,
@@ -45,7 +46,7 @@ export const createProduct: RequestHandler = async (req, res) => {
 export const updateProduct: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, image, category, badge, external_link, stripe_product_id, featured, field_guide_featured, shop_hero_featured, features } = req.body;
+    const { name, description, price, image, image_fit, category, badge, external_link, stripe_product_id, featured, field_guide_featured, shop_hero_featured, features } = req.body;
 
     const { data, error } = await supabaseAnonClient
       .from('products')
@@ -54,6 +55,7 @@ export const updateProduct: RequestHandler = async (req, res) => {
         description,
         price,
         image,
+        image_fit: image_fit || 'cover',
         category,
         badge,
         external_link,
