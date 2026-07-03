@@ -47,6 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await db
         .from("articles")
         .select("*")
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("date", { ascending: false });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: (data || []).map(mapArticle) });
@@ -58,6 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("articles")
         .select("*")
         .eq("featured", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("date", { ascending: false })
         .limit(5);
       if (error) return res.status(400).json({ data: [], error: error.message });
@@ -88,6 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await db
         .from("courses")
         .select("*")
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: false });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -99,6 +102,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("courses")
         .select("*")
         .eq("featured", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(6);
       if (error) return res.status(400).json({ data: [], error: error.message });
@@ -117,6 +121,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await db
         .from("products")
         .select("*")
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: false });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -128,6 +133,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("products")
         .select("*")
         .eq("featured", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: false });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -169,6 +175,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await db
         .from("podcasts")
         .select("*")
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("episode_number", { ascending: false });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -189,6 +196,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select("*")
         .eq("active", true)
         .eq("page", page)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("display_order", { ascending: true })
         .limit(6);
       if (error) return res.status(400).json({ data: [], error: error.message });
@@ -201,6 +209,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("field_reports")
         .select("*")
         .eq("active", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("display_order", { ascending: true });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -212,6 +221,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("pack_testimonials")
         .select("*")
         .eq("active", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("display_order", { ascending: true });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });
@@ -223,6 +233,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from("pack_gallery")
         .select("*")
         .eq("active", true)
+        .order("sort_order", { ascending: true, nullsFirst: false })
         .order("display_order", { ascending: true });
       if (error) return res.status(400).json({ data: [], error: error.message });
       return res.json({ data: data || [] });

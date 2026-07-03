@@ -36,6 +36,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const [resource, id] = pathSegments;
 
+  // POST /api/admin/reorder — swap sort_order between adjacent items
+  if (resource === "reorder" && req.method === "POST") {
+    const { table, id: itemId, direction } = req.body || {};
+    if (!ALLOWED_TABLES.includes(table)) {
+      return res.status(400).json({ error: "Invalid table" });
+    }
+    if (direction !== "up" && direction !== "down") {
+      return res.status(400).json({ error: "direction must be up or down" });
+    }
+    try {
+      const { data: rawItems, error: fetchErr } = await db
+        .from(table)
+        .select("id, sort_order")
+        .order("sort_order", { ascending: true, nullsFirst: false });
+      if (fetchErr || !rawItems) {
+        return res.status(500).json({ error: fetchErr?.message || "Failed to fetch items" });
+      }
+
+      // Initialise null sort_orders sequentially so swapping actually changes order
+      const items = rawItems.map((it, i) => ({ ...it }));
+      const needsInit = items.some((it) => it.sort_order == null);
+      if (needsInit) {
+        for (let i = 0; i < items.length; i++) {
+          items[i].sort_order = i + 1;
+          await db.from(table).update({ sort_order: i + 1 }).eq("id", items[i].id);
+        }
+      }
+
+      const idx = items.findIndex((it) => String(it.id) === String(itemId));
+      if (idx === -1) return res.status(404).json({ error: "Item not found" });
+
+      const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= items.length) {
+        return res.status(400).json({ error: "Already at boundary" });
+      }
+
+      const current = items[idx];
+      const swap = items[swapIdx];
+      const { error: err1 } = await db.from(table).update({ sort_order: swap.sort_order }).eq("id", current.id);
+      const { error: err2 } = await db.from(table).update({ sort_order: current.sort_order }).eq("id", swap.id);
+      if (err1 || err2) return res.status(500).json({ error: "Failed to reorder" });
+
+      return res.json({ success: true });
+    } catch (err) {
+      return res.status(500).json({ error: err instanceof Error ? err.message : "Server error" });
+    }
+  }
+
   if (!resource || !ALLOWED_TABLES.includes(resource)) {
     return res.status(404).json({ error: "Resource not found" });
   }
