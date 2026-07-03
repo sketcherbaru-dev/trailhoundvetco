@@ -32,18 +32,31 @@ export const reorderItem: RequestHandler = async (req, res) => {
   }
 
   try {
-    // Get all items ordered by sort_order for this table
-    const { data: items, error: fetchErr } = await supabaseServiceClient
+    // Get all items — order by sort_order if set, else by id
+    const { data: rawItems, error: fetchErr } = await supabaseServiceClient
       .from(table)
       .select('id, sort_order')
       .order('sort_order', { ascending: true, nullsFirst: false });
 
-    if (fetchErr || !items) {
+    if (fetchErr || !rawItems) {
       res.status(500).json({ error: fetchErr?.message || 'Failed to fetch items' });
       return;
     }
 
-    const idx = items.findIndex((item) => item.id === id);
+    // Initialise null sort_orders sequentially so swapping actually changes order
+    const needsInit = rawItems.some((item) => item.sort_order == null);
+    if (needsInit) {
+      for (let i = 0; i < rawItems.length; i++) {
+        rawItems[i] = { ...rawItems[i], sort_order: i + 1 };
+        await supabaseServiceClient
+          .from(table)
+          .update({ sort_order: i + 1 })
+          .eq('id', rawItems[i].id);
+      }
+    }
+
+    const items = rawItems;
+    const idx = items.findIndex((item) => String(item.id) === String(id));
     if (idx === -1) {
       res.status(404).json({ error: 'Item not found' });
       return;
