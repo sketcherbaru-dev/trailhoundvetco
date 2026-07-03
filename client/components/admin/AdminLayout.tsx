@@ -59,10 +59,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <div className="px-6 py-5 border-b border-slate-700 flex items-center justify-between">
           <div>
-            <Link to="/" className="text-lg font-bold text-white hover:text-orange-400 transition-colors">
-              Trailhound Vet
+            <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
+              <img src="/trailhound-logo-full.png" alt="Trailhound Veterinary Collective" className="h-14 w-auto" />
             </Link>
-            <p className="text-xs text-slate-400 mt-0.5">Admin Panel</p>
+            <p className="text-xs text-slate-400 mt-1">Admin Panel</p>
           </div>
           {/* Close button on mobile */}
           <button
