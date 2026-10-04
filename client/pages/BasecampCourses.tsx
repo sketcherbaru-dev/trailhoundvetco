@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Course } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
@@ -71,6 +72,11 @@ export default function BasecampCourses() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="Basecamp Courses"
+        path="/basecamp-courses"
+        description="Hands-on pet first aid courses tailored for pet owners, search-and-rescue teams, working dog handlers, and first responders."
+      />
       <Navbar />
 
       {/* Hero Section */}

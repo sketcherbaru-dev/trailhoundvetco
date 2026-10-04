@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
 import Lightbox from "@/components/Lightbox";
+import Seo from "@/components/Seo";
 import { FieldReport, PackTestimonial, PackGalleryImage } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 import { useSectionBackground } from "@/hooks/useSectionBackground";
@@ -47,6 +48,11 @@ export default function ThePack() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="The Pack"
+        path="/the-pack"
+        description="Meet the Trailhound community—field reports, testimonials, and stories from pet owners, handlers, and first responders who put preparedness into practice."
+      />
       <Navbar />
 
       {/* Hero Section */}

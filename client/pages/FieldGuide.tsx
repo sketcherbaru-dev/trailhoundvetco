@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Article, Product } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 
@@ -40,6 +41,11 @@ export default function FieldGuide() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="The Trailhound Field Guide: First Aid for Pets"
+        path="/field-guide"
+        description="A comprehensive, user-friendly field guide covering 50+ trail emergencies with step-by-step triage for bites, cuts, heat stroke, altitude sickness, and more."
+      />
       <Navbar />
 
       {/* Hero Section */}
