@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Product } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 
@@ -109,6 +110,11 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="Shop"
+        path="/shop"
+        description="Field guides, first aid kits, trail gear, and courses to help you recognize, respond to, and stabilize animal emergencies before veterinary care is available."
+      />
       <Navbar />
 
       {/* Hero Section */}

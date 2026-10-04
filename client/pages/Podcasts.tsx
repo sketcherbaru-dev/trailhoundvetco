@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Podcast } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 
@@ -32,6 +33,11 @@ export default function Podcasts() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="Podcasts"
+        path="/podcasts"
+        description="Conversations on field medicine, emergency preparedness, and the realities of caring for animals in high-stakes environments."
+      />
       <Navbar />
 
       {/* Hero Section */}

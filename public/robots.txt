@@ -12,3 +12,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
+Disallow: /shop/success
+
+Sitemap: https://trailhoundvetco.com/sitemap.xml

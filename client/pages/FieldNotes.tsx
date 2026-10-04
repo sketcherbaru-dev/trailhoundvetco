@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Article } from "@shared/api";
 import { useHeroImages } from "@/hooks/useHeroImages";
 
@@ -87,6 +88,11 @@ export default function FieldNotes() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="Field Notes"
+        path="/field-notes"
+        description="Practical articles on animal physiology, behavior, nutrition, and injury—reliable knowledge for managing pet emergencies in the field."
+      />
       <Navbar />
 
       {/* Hero Section */}

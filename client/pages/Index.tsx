@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsletterSection from "@/components/NewsletterSection";
+import Seo from "@/components/Seo";
 import { Article, Course, HeroImage } from "@shared/api";
 
 export default function Index() {
@@ -45,6 +46,10 @@ export default function Index() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        path="/"
+        description="Trailhound Veterinary Collective bridges everyday pet ownership and real-world emergency preparedness—field guides, courses, and tools for pet owners, vets, working dog handlers, and first responders."
+      />
       <Navbar />
 
       {/* Hero Section — Cinematic Carousel */}

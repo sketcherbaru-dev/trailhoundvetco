@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 interface FormData {
   name: string;
@@ -56,6 +57,11 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen flex flex-col bg-th-cream">
+      <Seo
+        title="Contact"
+        path="/contact"
+        description="Get in touch with Trailhound Veterinary Collective for support, product questions, or partnership opportunities."
+      />
       <Navbar />
 
       <section className="relative py-16 md:py-24 bg-gradient-to-br from-th-teal/5 to-th-peach/5">
