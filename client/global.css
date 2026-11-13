@@ -70,6 +70,14 @@
     overflow-x: auto;
     white-space: pre;
   }
+
+  /* Admin tables scroll horizontally; cells must NOT break text per-character.
+     Overrides the global overflow-wrap:anywhere above (which is for prose). */
+  table th,
+  table td {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
 }
 
 @layer utilities {
