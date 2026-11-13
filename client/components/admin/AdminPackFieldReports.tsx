@@ -198,6 +198,7 @@ const AdminPackFieldReports = () => {
           <p className="font-medium">No field reports yet.</p>
         </div>
       ) : (
+        <>
         <p className="text-xs text-gray-400 sm:hidden mb-2">&larr; Geser tabel ke samping untuk melihat semua kolom &rarr;</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
           <Table className="min-w-[760px]">
@@ -237,6 +238,7 @@ const AdminPackFieldReports = () => {
             </TableBody>
           </Table>
         </div>
+      </>
       )}
     </div>
   );
