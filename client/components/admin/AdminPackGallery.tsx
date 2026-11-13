@@ -171,8 +171,9 @@ const AdminPackGallery = () => {
           <p className="font-medium">No gallery images yet.</p>
         </div>
       ) : (
+        <p className="text-xs text-gray-400 sm:hidden mb-2">&larr; Geser tabel ke samping untuk melihat semua kolom &rarr;</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
-          <Table>
+          <Table className="min-w-[680px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Photo</TableHead>
