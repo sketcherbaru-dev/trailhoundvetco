@@ -355,8 +355,9 @@ const AdminArticles = () => {
           <p className="text-sm mt-1">Click "+ New Article" to create your first article.</p>
         </div>
       ) : (
+        <p className="text-xs text-gray-400 sm:hidden mb-2">&larr; Geser tabel ke samping untuk melihat semua kolom &rarr;</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
-          <Table>
+          <Table className="min-w-[820px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>

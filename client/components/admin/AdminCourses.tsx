@@ -323,8 +323,9 @@ const AdminCourses = () => {
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
+        <p className="text-xs text-gray-400 sm:hidden mb-2">&larr; Geser tabel ke samping untuk melihat semua kolom &rarr;</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
-          <Table>
+          <Table className="min-w-[760px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Course Title</TableHead>
