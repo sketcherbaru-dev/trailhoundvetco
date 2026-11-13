@@ -399,34 +399,36 @@ const AdminProducts = () => {
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
+        <div className="space-y-2">
+        <p className="text-xs text-gray-400 sm:hidden">← Geser tabel ke samping untuk melihat semua kolom →</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
-          <Table>
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
-                <TableHead>Product Name</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Featured</TableHead>
-                <TableHead>Field Guide</TableHead>
-                <TableHead>Order</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="whitespace-nowrap">Product Name</TableHead>
+                <TableHead className="whitespace-nowrap">Price</TableHead>
+                <TableHead className="whitespace-nowrap">Category</TableHead>
+                <TableHead className="whitespace-nowrap">Featured</TableHead>
+                <TableHead className="whitespace-nowrap">Field Guide</TableHead>
+                <TableHead className="whitespace-nowrap">Order</TableHead>
+                <TableHead className="whitespace-nowrap">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{product.price != null ? `$${(product.price as number).toFixed(2)}` : "—"}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.featured ? "✓" : "—"}</TableCell>
-                  <TableCell>{product.field_guide_featured ? "✓" : "—"}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{product.name}</TableCell>
+                  <TableCell className="whitespace-nowrap">{product.price != null ? `$${(product.price as number).toFixed(2)}` : "—"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{product.category}</TableCell>
+                  <TableCell className="whitespace-nowrap">{product.featured ? "✓" : "—"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{product.field_guide_featured ? "✓" : "—"}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex gap-1">
                       <Button size="sm" variant="outline" onClick={() => handleReorder(product.id, 'up')}>↑</Button>
                       <Button size="sm" variant="outline" onClick={() => handleReorder(product.id, 'down')}>↓</Button>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex gap-2">
                       <Button
                         size="sm"
@@ -448,6 +450,7 @@ const AdminProducts = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
         </div>
       )}
     </div>
