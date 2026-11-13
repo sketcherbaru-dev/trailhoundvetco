@@ -1,13 +1,14 @@
 name: Supabase Keep-Alive
 
 # Supabase free-tier projects pause after 7 days of inactivity.
-# This workflow sends a lightweight read request every 3 days so the
+# This workflow sends a lightweight read request every day so the
 # database registers activity and stays active.
 
 on:
   schedule:
-    # At 06:00 UTC every 3rd day of the month (approx. every ~3 days).
-    - cron: "0 6 */3 * *"
+    # Jalan setiap hari jam 06:00 UTC. Margin aman jauh di bawah batas 7 hari,
+    # jadi beberapa run gagal/telat berturut-turut pun tidak membuat Supabase pause.
+    - cron: "0 6 * * *"
   # Allow running manually from the Actions tab.
   workflow_dispatch:
 
