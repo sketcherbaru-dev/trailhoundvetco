@@ -320,6 +320,7 @@ const AdminHero = () => {
           <p className="text-sm mt-1">Add up to 6 images. With only 1 image, no carousel is shown.</p>
         </div>
       ) : (
+        <>
         <p className="text-xs text-gray-400 sm:hidden mb-2">&larr; Geser tabel ke samping untuk melihat semua kolom &rarr;</p>
         <div className="bg-white rounded-lg border overflow-x-auto">
           <Table className="min-w-[720px]">
@@ -362,6 +363,7 @@ const AdminHero = () => {
             </TableBody>
           </Table>
         </div>
+      </>
       )}
     </div>
   );
